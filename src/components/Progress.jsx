@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import "./Progress.css"
-import { ProgressTask } from './ProgressTask'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 import dummyData from './dummyData'
 import { Card } from './Card'
@@ -76,7 +75,7 @@ export const Progress = () => {
                               opacity: snapshot.isDragging ? "0.5" : "1",
                             }}
                           >
-                            <Card title={task.title} />
+                            <Card title={task.title} startDate={task.startDate} compDate={task.compDate} pic={task.pic} />
                             {/* {console.log(task.title)} */}
                           </div>
                         )}
