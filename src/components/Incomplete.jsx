@@ -5,15 +5,21 @@ export const Incomplete = (props) => {
   return (
     <>
       <div className="incomplete-area">
-        <p className="title">未完了のTODO</p>
+        <p className="title">TODO</p>
         <ul>
           {incompleteList.map((todo, index) => {
             return (
-              <li key={todo}>
+              <li key={index}>
                 <div className="list-row">
-                  {todo}
-                  <button onClick={() => onClickComplete(index)}>完了</button>
-                  <button onClick={() => onClickDelete(index)}>削除</button>
+                  <span className={`${todo.completeFlag ? "completed" : ""}`}>{todo.taskName}</span>
+                  <span>担当:{todo.pic.map(person => person)}</span>
+                  <span>工数:{todo.taskHour}</span>
+                  <button onClick={() => onClickComplete(todo.id)}>
+                    <i className="fa-sharp fa-solid fa-check"></i>
+                  </button>
+                  <button onClick={() => onClickDelete(index)}>
+                    <i className="fa-solid fa-trash"></i>
+                  </button>
                 </div>
               </li>
             );
