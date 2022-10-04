@@ -13,6 +13,7 @@ export const Incomplete = (props) => {
                 <div className="list-row">
                   <span className={`${todo.completeFlag ? "completed" : ""}`}>{todo.taskName}</span>
                   <span>担当:{todo.pic.map(person => person)}</span>
+                  <span>種別:{todo.category}</span>
                   <span>工数:{todo.taskHour}</span>
                   <button onClick={() => onClickComplete(todo.id)}>
                     <i className="fa-sharp fa-solid fa-check"></i>

@@ -1,12 +1,42 @@
-/* body {
+body {
   font-family: sans-serif;
 }
 
 input {
-  border-radius: 16px;
   border: none;
   padding: 6px 16px;
   outline: none;
+}
+
+.text-input {
+  margin: 4px auto;
+  border-radius: 16px;
+  min-width: 95%;
+  min-height: 25px;
+}
+
+.select-area {
+  display: flex;
+}
+
+.type-select {
+  width: 30%;
+  max-height: 50px;
+  margin: 0 4px 0 0;
+}
+
+.pic-select {
+  width: 60%;
+  margin: 0 4px 0 0;
+}
+
+.hm {
+  width: 10%;
+}
+
+.button-area {
+  text-align: center;
+  margin: 4px 0;
 }
 
 button:hover {
@@ -18,7 +48,7 @@ button:hover {
 button {
   border-radius: 16px;
   border: none;
-  padding: 4px 16px;
+  padding: 4px 36px;
 }
 
 li {
@@ -26,13 +56,13 @@ li {
 }
 
 .input-area {
-  background-color: aquamarine;
+  background-color: #ffe7c5;
   padding: 8px;
   margin: 8px;
 }
 
 .incomplete-area {
-  background-color: #c1ffff;
+  background-color: #dbfff2;
   padding: 8px;
   margin: 8px;
   min-height: 200px;
@@ -62,4 +92,9 @@ li {
 .completed {
   text-decoration: line-through;
   opacity: 0.5;
-} */
+}
+
+.todo-body {
+  width: 80%;
+  margin: 0 auto;
+}
