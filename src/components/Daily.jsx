@@ -14,6 +14,9 @@ export const Daily = () => {
   const year = dateTime.getFullYear();
   const month = dateTime.getMonth();
   const date = dateTime.getDate();
+  const hour = dateTime.getHours();
+  const minute = dateTime.getMinutes();
+  const seconds = dateTime.getSeconds();
 
   const [incompleteList, setIncompleteList] = useState([]);
   const [completeList, setCompleteList] = useState([]);
@@ -21,8 +24,7 @@ export const Daily = () => {
   const [inputHour, setInputHour] = useState("");
   const [selectedPerson, setSelectedPerson] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [optionValue, setOptionValue] = useState("");
-  const [dispDate, setDispDate] = useState(new Date(year, month, date));
+  const [dispDate, setDispDate] = useState(new Date(year, month, date, hour, minute, seconds));
   const [categoryFlag, setCategoryFlag] = useState(false);
   const [picFlag, setPicFlag] = useState(false);
 
@@ -94,20 +96,21 @@ export const Daily = () => {
   };
 
   const onChangeNextDate = () => {
-    const nextDay = new Date(year, month, dispDate.getDate() + 1);
+    const nextDay = new Date(dispDate.getFullYear(), dispDate.getMonth(), dispDate.getDate() + 1, dispDate.getHours(), dispDate.getMinutes(), dispDate.getSeconds());
     setDispDate(nextDay);
     // console.log(`${nextDay}に更新`);
   }
 
   const onChangePrevDate = () => {
-    const prevDay = new Date(year, month, dispDate.getDate() - 1);
+    const prevDay = new Date(dispDate.getFullYear(), dispDate.getMonth(), dispDate.getDate() - 1, dispDate.getHours(), dispDate.getMinutes(), dispDate.getSeconds());
     setDispDate(prevDay);
     // console.log(`${prevDay}に更新`);
   }
 
   useEffect(() => {
+    const taskDate = new Date(dispDate.getFullYear(), dispDate.getMonth(), dispDate.getDate())
     const tomorrowDate = new Date(year, month, dispDate.getDate() + 1);
-    const querySnapshot = query(collection(db, "daily"), where("date", ">=", dispDate), where("date", "<", tomorrowDate));
+    const querySnapshot = query(collection(db, "daily"), where("date", ">=", taskDate), where("date", "<", tomorrowDate));
     getDocs(querySnapshot)
       .then((snapShot) => {
         const todayTask = snapShot.docs.map(doc => ({ ...doc.data() }));
