@@ -10,12 +10,18 @@ import "./Daily.css"
 
 
 export const Daily = () => {
+  const dateTime = new Date();
+  const year = dateTime.getFullYear();
+  const month = dateTime.getMonth();
+  const date = dateTime.getDate();
+
   const [incompleteList, setIncompleteList] = useState([]);
   const [completeList, setCompleteList] = useState([]);
   const [inputText, setInputText] = useState("");
   const [inputHour, setInputHour] = useState("");
   const [selectedPerson, setSelectedPerson] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [dispDate, setDispDate] = useState(new Date(year, month, date));
 
   const onChangeText = (e) => {
     setInputText(e.target.value);
@@ -52,7 +58,7 @@ export const Daily = () => {
         category: selectedCategory,
         taskHour: inputHour,
         completeFlag: false,
-        date: new Date()
+        date: dispDate
       });
       console.log("Document written with ID: ", docRef.id);
     } catch (e) {
@@ -81,24 +87,38 @@ export const Daily = () => {
     setIncompleteList(newIncompleteList);
   };
 
+  const onChangeNextDate = () => {
+    const nextDay = new Date(year, month, dispDate.getDate() + 1);
+    setDispDate(nextDay);
+    // console.log(`${nextDay}に更新`);
+  }
+
+  const onChangePrevDate = () => {
+    const prevDay = new Date(year, month, dispDate.getDate() - 1);
+    setDispDate(prevDay);
+    // console.log(`${prevDay}に更新`);
+  }
+
   useEffect(() => {
-    const dateTime = new Date();
-    const year = dateTime.getFullYear();
-    const month = dateTime.getMonth();
-    const date = dateTime.getDate();
-    const today = new Date(year, month, date);
-    const tomorrow = new Date(year, month, date + 1);
-    const querySnapshot = query(collection(db, "daily"), where("date", ">=", today), where("date", "<=", tomorrow));
+    const tomorrowDate = new Date(year, month, dispDate.getDate() + 1);
+    const querySnapshot = query(collection(db, "daily"), where("date", ">=", dispDate), where("date", "<", tomorrowDate));
     getDocs(querySnapshot)
       .then((snapShot) => {
         const todayTask = snapShot.docs.map(doc => ({ ...doc.data() }));
         setIncompleteList(todayTask)
       });
-  }, [])
+  }, [dispDate])
+
+  const formatDate = dispDate.getMonth() + 1 + "/" + dispDate.getDate();
 
   return (
     <>
       <h1 className="title">TODO</h1>
+      <div className="title-area">
+        <span className="before" onClick={onChangePrevDate}>前日</span>
+        <h3 className="title">{formatDate}</h3>
+        <span className="next" onClick={onChangeNextDate}>翌日</span>
+      </div>
       <div className="todo-body">
         <InputTodo
           input={inputText}

@@ -13,6 +13,7 @@ input {
   border-radius: 16px;
   min-width: 95%;
   min-height: 25px;
+  font-size: medium;
 }
 
 .select-area {
@@ -32,6 +33,7 @@ input {
 
 .hm {
   width: 10%;
+  font-size: medium;
 }
 
 .button-area {
@@ -49,6 +51,9 @@ button {
   border-radius: 16px;
   border: none;
   padding: 4px 36px;
+  min-height: 30px;
+  background-color: white;
+  margin: 4px 0 0 0;
 }
 
 li {
@@ -82,11 +87,24 @@ li {
   padding-bottom: 4px;
 }
 
+.title-area {
+  display: flex;
+  margin: 8px 0 0 0;
+}
+
 .title {
   text-align: center;
-  margin-top: 0px;
+  margin: 0 auto;
   font-weight: bold;
   color: #666;
+}
+
+.before {
+  margin: 8px 0 0 20%;
+}
+
+.next {
+  margin: 8px 20% 0 0;
 }
 
 .completed {
