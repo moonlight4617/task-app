@@ -10,21 +10,13 @@ import "./Daily.css"
 
 
 export const Daily = () => {
-  const dateTime = new Date();
-  const year = dateTime.getFullYear();
-  const month = dateTime.getMonth();
-  const date = dateTime.getDate();
-  const hour = dateTime.getHours();
-  const minute = dateTime.getMinutes();
-  const seconds = dateTime.getSeconds();
-
   const [incompleteList, setIncompleteList] = useState([]);
   const [completeList, setCompleteList] = useState([]);
   const [inputText, setInputText] = useState("");
   const [inputHour, setInputHour] = useState("");
   const [selectedPerson, setSelectedPerson] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [dispDate, setDispDate] = useState(new Date(year, month, date, hour, minute, seconds));
+  const [dispDate, setDispDate] = useState(new Date());
   const [categoryFlag, setCategoryFlag] = useState(false);
   const [picFlag, setPicFlag] = useState(false);
 
@@ -55,10 +47,12 @@ export const Daily = () => {
     setIncompleteList(newIncompleteList);
     setInputText("");
     setInputHour("");
-    // setSelectedCategory("");
     setCategoryFlag(false);
     setPicFlag(false);
 
+    // その時の作成日時がdateに入るよう改修
+    const newDate = new Date();
+    const submitDate = new Date(dispDate.getFullYear(), dispDate.getMonth(), dispDate.getDate(), newDate.getHours(), newDate.getMinutes(), newDate.getSeconds());
     try {
       const docRef = await addDoc(collection(db, "daily"), {
         taskName: inputText,
@@ -66,7 +60,7 @@ export const Daily = () => {
         category: selectedCategory,
         taskHour: inputHour,
         completeFlag: false,
-        date: dispDate
+        date: submitDate
       });
       console.log("Document written with ID: ", docRef.id);
     } catch (e) {
@@ -96,20 +90,20 @@ export const Daily = () => {
   };
 
   const onChangeNextDate = () => {
-    const nextDay = new Date(dispDate.getFullYear(), dispDate.getMonth(), dispDate.getDate() + 1, dispDate.getHours(), dispDate.getMinutes(), dispDate.getSeconds());
+    const nextDay = new Date(dispDate.getFullYear(), dispDate.getMonth(), dispDate.getDate() + 1);
     setDispDate(nextDay);
     // console.log(`${nextDay}に更新`);
   }
 
   const onChangePrevDate = () => {
-    const prevDay = new Date(dispDate.getFullYear(), dispDate.getMonth(), dispDate.getDate() - 1, dispDate.getHours(), dispDate.getMinutes(), dispDate.getSeconds());
+    const prevDay = new Date(dispDate.getFullYear(), dispDate.getMonth(), dispDate.getDate() - 1);
     setDispDate(prevDay);
     // console.log(`${prevDay}に更新`);
   }
 
   useEffect(() => {
     const taskDate = new Date(dispDate.getFullYear(), dispDate.getMonth(), dispDate.getDate())
-    const tomorrowDate = new Date(year, month, dispDate.getDate() + 1);
+    const tomorrowDate = new Date(dispDate.getFullYear(), dispDate.getMonth(), dispDate.getDate() + 1);
     const querySnapshot = query(collection(db, "daily"), where("date", ">=", taskDate), where("date", "<", tomorrowDate));
     getDocs(querySnapshot)
       .then((snapShot) => {
