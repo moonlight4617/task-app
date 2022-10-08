@@ -21,7 +21,10 @@ export const Daily = () => {
   const [inputHour, setInputHour] = useState("");
   const [selectedPerson, setSelectedPerson] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [optionValue, setOptionValue] = useState("");
   const [dispDate, setDispDate] = useState(new Date(year, month, date));
+  const [categoryFlag, setCategoryFlag] = useState(false);
+  const [picFlag, setPicFlag] = useState(false);
 
   const onChangeText = (e) => {
     setInputText(e.target.value);
@@ -34,10 +37,12 @@ export const Daily = () => {
   const onHandlePerson = (e) => {
     const persons = e.map((person) => (person.value))
     setSelectedPerson(persons);
+    setPicFlag(true);
   };
 
   const onChangeCategory = (e) => {
     setSelectedCategory(e.value);
+    setCategoryFlag(true);
   };
 
   const onClickAdd = async () => {
@@ -48,8 +53,9 @@ export const Daily = () => {
     setIncompleteList(newIncompleteList);
     setInputText("");
     setInputHour("");
-    setSelectedPerson([]);
-    console.log(personValue.value);
+    // setSelectedCategory("");
+    setCategoryFlag(false);
+    setPicFlag(false);
 
     try {
       const docRef = await addDoc(collection(db, "daily"), {
@@ -123,8 +129,8 @@ export const Daily = () => {
         <InputTodo
           input={inputText}
           inputHour={inputHour}
-          selectedPerson={selectedPerson}
-          selectedCategory={selectedCategory}
+          categoryFlag={categoryFlag}
+          picFlag={picFlag}
           onChange={onChangeText}
           onChangeHour={onChangeHour}
           onHandlePerson={onHandlePerson}
