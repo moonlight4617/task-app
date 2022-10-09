@@ -15,7 +15,11 @@ export const Incomplete = (props) => {
               <div className={`${todo.completeFlag ? "completed" : ""}`}>
                 <div className="todoText">
                   <span>{todo.taskName}</span>
-                  <span className="pic">{todo.pic.map(person => person)}</span>
+                  <span className="pic-area">
+                    {todo.pic.map((person, index) => (
+                      <span key={index} className="pic">{person}</span>
+                    ))}
+                  </span>
                   <span className="category">種別:{todo.category}</span>
                   <span className="hm">工数:{todo.taskHour}</span>
                 </div>
@@ -24,7 +28,7 @@ export const Incomplete = (props) => {
                 <button className="icon" onClick={() => onClickComplete(todo.id)}>
                   <i className="fa-sharp fa-solid fa-check"></i>
                 </button>
-                <button className="icon" onClick={() => onClickDelete(index)}>
+                <button className="icon" onClick={() => onClickDelete(todo.id, index)}>
                   <i className="fa-solid fa-trash"></i>
                 </button>
               </div>

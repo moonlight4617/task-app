@@ -42,12 +42,16 @@
 }
 
 .pic {
-  margin: 0 0 0 3rem;
+  margin: 0 0 0 0.2rem;
   border: 1px solid;
   padding: 0.2rem 0.75rem;
   border-radius: 16px;
   background-color: rgb(32, 155, 237);
   color: white;
+}
+
+.pic-area {
+  margin: 0 0 0 3rem;
 }
 
 .category {

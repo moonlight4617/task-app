@@ -4,7 +4,7 @@ import { InputTodo } from "./InputTodo";
 import { Incomplete } from "./Incomplete";
 import { Complete } from "./Complete";
 import { v4 as uuidv4 } from "uuid";
-import { collection, addDoc, getDocs, query, where, startAt, endAt, snapshotEqual } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, where, updateDoc, deleteDoc, doc } from "firebase/firestore";
 import { db } from '../firebase';
 import "./Daily.css"
 
@@ -70,9 +70,10 @@ export const Daily = () => {
   };
 
 
-  const onClickDelete = (index) => {
+  const onClickDelete = async (id, index) => {
     const newIncompleteList = [...incompleteList];
     newIncompleteList.splice(index, 1);
+    await deleteDoc(doc(db, "daily", id));
     setIncompleteList(newIncompleteList);
   };
 
@@ -80,7 +81,16 @@ export const Daily = () => {
   const onClickComplete = (id) => {
     const newIncompleteList = incompleteList.map((list) => {
       if (list.id === id) {
-        list.completeFlag = !list.completeFlag
+        const flag = !list.completeFlag
+        list.completeFlag = flag;
+        const setCompFlag = doc(db, "daily", list.id);
+        const update = async () => {
+          await updateDoc(setCompFlag, {
+            completeFlag: flag
+          });
+          console.log("更新成功");
+        }
+        update();
       }
       return list;
     });
