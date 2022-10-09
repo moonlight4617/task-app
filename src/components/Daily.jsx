@@ -4,7 +4,7 @@ import { InputTodo } from "./InputTodo";
 import { Incomplete } from "./Incomplete";
 import { Complete } from "./Complete";
 import { v4 as uuidv4 } from "uuid";
-import { collection, addDoc, getDocs, query, where, startAt, endAt } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, where, startAt, endAt, snapshotEqual } from "firebase/firestore";
 import { db } from '../firebase';
 import "./Daily.css"
 
@@ -55,6 +55,7 @@ export const Daily = () => {
     const submitDate = new Date(dispDate.getFullYear(), dispDate.getMonth(), dispDate.getDate(), newDate.getHours(), newDate.getMinutes(), newDate.getSeconds());
     try {
       const docRef = await addDoc(collection(db, "daily"), {
+        id: uuidv4(),
         taskName: inputText,
         pic: selectedPerson,
         category: selectedCategory,
@@ -79,10 +80,7 @@ export const Daily = () => {
   const onClickComplete = (id) => {
     const newIncompleteList = incompleteList.map((list) => {
       if (list.id === id) {
-        return {
-          ...list,
-          completeFlag: !list.completeFlag,
-        }
+        list.completeFlag = !list.completeFlag
       }
       return list;
     });
@@ -102,12 +100,22 @@ export const Daily = () => {
   }
 
   useEffect(() => {
+    let todayTask = [];
     const taskDate = new Date(dispDate.getFullYear(), dispDate.getMonth(), dispDate.getDate())
     const tomorrowDate = new Date(dispDate.getFullYear(), dispDate.getMonth(), dispDate.getDate() + 1);
     const querySnapshot = query(collection(db, "daily"), where("date", ">=", taskDate), where("date", "<", tomorrowDate));
     getDocs(querySnapshot)
       .then((snapShot) => {
-        const todayTask = snapShot.docs.map(doc => ({ ...doc.data() }));
+        snapShot.forEach((doc) => {
+          const id = { "id": doc.id }
+          // const task = Object.assign(id, doc.data());
+          const task = { ...id, ...doc.data() };
+          // console.log(task);
+          todayTask.push(task);
+        })
+        // const todayTask = snapShot.docs.map(doc => ({
+        //   ...doc.data()
+        // }));
         setIncompleteList(todayTask)
       });
   }, [dispDate])

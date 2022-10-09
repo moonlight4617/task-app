@@ -1,4 +1,5 @@
 import React from "react";
+import "./Incomplete.css"
 
 export const Incomplete = (props) => {
   const { incompleteList, onClickComplete, onClickDelete } = props;
@@ -6,26 +7,32 @@ export const Incomplete = (props) => {
     <>
       <div className="incomplete-area">
         <p className="title">タスク一覧</p>
-        <ul>
-          {incompleteList.map((todo, index) => {
-            return (
-              <li key={index}>
-                <div className="list-row">
-                  <span className={`${todo.completeFlag ? "completed" : ""}`}>{todo.taskName}</span>
-                  <span>担当:{todo.pic.map(person => person)}</span>
-                  <span>種別:{todo.category}</span>
-                  <span>工数:{todo.taskHour}</span>
-                  <button onClick={() => onClickComplete(todo.id)}>
-                    <i className="fa-sharp fa-solid fa-check"></i>
-                  </button>
-                  <button onClick={() => onClickDelete(index)}>
-                    <i className="fa-solid fa-trash"></i>
-                  </button>
+        {/* <div className="todoList">
+          <div className="todos"> */}
+        {incompleteList.map((todo, index) => {
+          return (
+            <div className="list-row" key={index}>
+              <div className={`${todo.completeFlag ? "completed" : ""}`}>
+                <div className="todoText">
+                  <span>{todo.taskName}</span>
+                  <span className="pic">{todo.pic.map(person => person)}</span>
+                  <span className="category">種別:{todo.category}</span>
+                  <span className="hm">工数:{todo.taskHour}</span>
                 </div>
-              </li>
-            );
-          })}
-        </ul>
+              </div>
+              <div className="icon-area">
+                <button className="icon" onClick={() => onClickComplete(todo.id)}>
+                  <i className="fa-sharp fa-solid fa-check"></i>
+                </button>
+                <button className="icon" onClick={() => onClickDelete(index)}>
+                  <i className="fa-solid fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          );
+        })}
+        {/* </div>
+        </div> */}
       </div>
     </>
   );

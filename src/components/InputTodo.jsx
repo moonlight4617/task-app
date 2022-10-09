@@ -1,5 +1,6 @@
 import React from "react";
 import Select from 'react-select'
+import "./InputTodo.css"
 
 export const InputTodo = (props) => {
   const { input, inputHour, onChange, onClick, disabledFlag, onChangeHour, onHandlePerson, onChangeCategory, categoryFlag, picFlag } = props;
@@ -35,7 +36,7 @@ export const InputTodo = (props) => {
           <input type="number" min="0" placeholder="工数" value={inputHour} onChange={onChangeHour} className="hm" />
         </div>
         <div className="button-area">
-          <button onClick={onClick}>作成</button>
+          <button className="button" onClick={onClick}>作成</button>
         </div>
       </div>
     </>
