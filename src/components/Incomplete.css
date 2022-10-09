@@ -1,0 +1,68 @@
+.list-row {
+  display: flex;
+  align-items: center;
+  padding-bottom: 4px;
+}
+
+.todoList {
+  /* width: 100vw; */
+  margin: 2rem auto;
+}
+
+.icon-area {
+  margin: 0 2rem 0 auto;
+}
+
+.icon {
+  padding: 0.487rem .5rem;
+  margin: 0 0.25rem 0 0;
+  border-radius: 8px;
+  border: none;
+  min-height: 30px;
+  background-color: white;
+}
+
+.icon:hover {
+  background-color: pink;
+  color: white;
+  cursor: pointer;
+}
+
+.todo {
+  margin: 0.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.todoText {
+  min-width: 6rem;
+  max-height: 1.8rem;
+  padding: 0.3rem 2rem;
+}
+
+.pic {
+  margin: 0 0 0 0.2rem;
+  border: 1px solid;
+  padding: 0.2rem 0.75rem;
+  border-radius: 16px;
+  background-color: rgb(32, 155, 237);
+  color: white;
+}
+
+.pic-area {
+  margin: 0 0 0 3rem;
+}
+
+.category {
+  margin: 0 0 0 0.5rem;
+}
+
+.hm {
+  margin: 0 0 0 0.5rem;
+}
+
+.completed {
+  text-decoration: line-through;
+  opacity: 0.5;
+}

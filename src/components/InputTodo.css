@@ -1,0 +1,19 @@
+.button-area {
+  text-align: center;
+  margin: 4px 0;
+}
+
+.button:hover {
+  background-color: pink;
+  color: white;
+  cursor: pointer;
+}
+
+.button {
+  border-radius: 16px;
+  border: none;
+  padding: 4px 36px;
+  min-height: 30px;
+  background-color: white;
+  margin: 4px 0 0 0;
+}

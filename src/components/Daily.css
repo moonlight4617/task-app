@@ -1,0 +1,92 @@
+body {
+  font-family: sans-serif;
+}
+
+input {
+  border: none;
+  padding: 6px 16px;
+  outline: none;
+}
+
+.text-input {
+  margin: 4px auto;
+  border-radius: 16px;
+  min-width: 95%;
+  min-height: 25px;
+  font-size: medium;
+}
+
+.select-area {
+  display: flex;
+}
+
+.type-select {
+  width: 30%;
+  max-height: 50px;
+  margin: 0 4px 0 0;
+}
+
+.pic-select {
+  width: 60%;
+  margin: 0 4px 0 0;
+}
+
+.hm {
+  width: 10%;
+  font-size: medium;
+}
+
+li {
+  margin-right: 8px;
+}
+
+.input-area {
+  background-color: #ffe7c5;
+  padding: 8px;
+  margin: 8px;
+}
+
+.incomplete-area {
+  background-color: #dbfff2;
+  padding: 8px;
+  margin: 8px;
+  min-height: 200px;
+}
+
+.complete-area {
+  background-color: yellow;
+  padding: 8px;
+  margin: 8px;
+  width: 400px;
+  min-height: 200px;
+}
+
+.title-area {
+  display: flex;
+  margin: 8px 0 0 0;
+}
+
+.title {
+  text-align: center;
+  margin: 0 auto;
+  font-weight: bold;
+  color: #666;
+}
+
+.before {
+  margin: 8px 0 0 20%;
+}
+
+.next {
+  margin: 8px 20% 0 0;
+}
+
+/* .completed {
+  text-decoration: line-through;
+  opacity: 0.5;
+} */
+
+.todo-body {
+  width: 80%;
+  margin: 0 auto;
+}

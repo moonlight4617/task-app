@@ -1,4 +1,4 @@
-body {
+/* body {
   font-family: sans-serif;
 }
 
@@ -29,15 +29,12 @@ li {
   background-color: aquamarine;
   padding: 8px;
   margin: 8px;
-  width: 400px;
-  height: 30px;
 }
 
 .incomplete-area {
   background-color: #c1ffff;
   padding: 8px;
   margin: 8px;
-  width: 400px;
   min-height: 200px;
 }
 
@@ -61,3 +58,8 @@ li {
   font-weight: bold;
   color: #666;
 }
+
+.completed {
+  text-decoration: line-through;
+  opacity: 0.5;
+} */
