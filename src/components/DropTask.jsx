@@ -1,11 +1,21 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { v4 as uuidv4 } from "uuid";
 import { Card } from './Card'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
-
+import "./DropTask.css"
+import { Modal } from './Modal.jsx'
 
 export const DropTask = (props) => {
   const { section, tasks, id } = props;
+  const [show, setShow] = useState(false);
+  const onClickAddTask = (e) => {
+    console.log(e.target.id);
+    setShow(true);
+  }
+  const onClickClose = () => {
+    setShow(false);
+  }
+
   return (
     < Droppable key={uuidv4()} droppableId={id} >
       {(provided) => (
@@ -33,6 +43,8 @@ export const DropTask = (props) => {
             ))}
             {provided.placeholder}
           </div>
+          <div onClick={onClickAddTask} id={id}>タスクの追加</div>
+          <Modal show={show} onClickClose={onClickClose} />
         </div>
       )}
     </Droppable>

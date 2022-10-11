@@ -24,9 +24,6 @@ export const Progress = () => {
       // 変数に取得したタスク一覧を保持
       // setSchTask(snapShot.docs.map(doc => ({ ...doc.data() })));
       const allTask = snapShot.docs.map(doc => ({ ...doc.data() }));
-      // snapShot.docs.map(doc => {
-      // console.log(doc.data());
-      // });
 
       // status == 0の場合は進行中に振り分け
       const inpro = allTask.filter(task => {
@@ -45,7 +42,7 @@ export const Progress = () => {
         return task.status === 2;
       })
       setInCompTask(incomp);
-      setSchTask(allTask);
+      // setSchTask(allTask);
     });
   }, [])
 
