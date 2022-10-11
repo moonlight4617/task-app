@@ -27,18 +27,21 @@ export const Progress = () => {
 
       // status == 0の場合は進行中に振り分け
       const inpro = allTask.filter(task => {
+        // console.log(task.startDate.toDate());
         return task.status === 0;
       })
       setInProTask(inpro);
 
       // status == 1の場合は完了に振り分け
       const comp = allTask.filter(task => {
+        // console.log(task.startDate.toDate());
         return task.status === 1;
       })
       setCompTask(comp);
 
       // status == 2の場合は今後のタスクに振り分け
       const incomp = allTask.filter(task => {
+        // console.log(task.startDate.toDate());
         return task.status === 2;
       })
       setInCompTask(incomp);

@@ -36,7 +36,7 @@ export const DropTask = (props) => {
                       opacity: snapshot.isDragging ? "0.5" : "1",
                     }}
                   >
-                    <Card key={task.id} title={task.task} pic={task.pic} />
+                    <Card key={task.id} title={task.task} pic={task.pic} startDate={task.startDate} compDate={task.compDate} note={task.note} />
                   </div>
                 )}
               </Draggable>
@@ -44,7 +44,7 @@ export const DropTask = (props) => {
             {provided.placeholder}
           </div>
           <div onClick={onClickAddTask} id={id}>タスクの追加</div>
-          <Modal show={show} onClickClose={onClickClose} />
+          <Modal show={show} onClickClose={onClickClose} id={id} />
         </div>
       )}
     </Droppable>

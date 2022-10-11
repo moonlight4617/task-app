@@ -10,7 +10,7 @@ import { SimpleDatePicker } from "./DatePicker";
 
 
 export const Modal = (props) => {
-  const { show, onClickClose } = props;
+  const { show, onClickClose, id } = props;
   const [inputText, setInputText] = useState("");
   const [note, setNote] = useState("");
   const [selectedPerson, setSelectedPerson] = useState([]);
@@ -53,11 +53,11 @@ export const Modal = (props) => {
     try {
       const docRef = await addDoc(collection(db, "schedule"), {
         id: uuidv4(),
-        taskName: inputText,
+        task: inputText,
         pic: selectedPerson,
         startDate: value.$d || value,
         compDate: endValue.$d || endValue,
-        status: 0,
+        status: Number(id),
         note: note
       });
       console.log("Document written with ID: ", docRef.id);
