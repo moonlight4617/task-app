@@ -53,8 +53,8 @@ export const DropTask = (props) => {
                       opacity: snapshot.isDragging ? "0.5" : "1",
                     }}
                   >
-                    <Card key={task.id} title={task.task} pic={task.pic} startDate={task.startDate} compDate={task.compDate} note={task.note} onClickEditTask={onClickEditTask} id={task.id} />
-                    <EditModal id={id} task={editTask} showEditModal={showEditModal} onClickCloseEditModal={onClickCloseEditModal} schTask={schTask} setSchTask={setSchTask} setTask={setTask} />
+                    <Card key={task.id} task={task} onClickEditTask={onClickEditTask} schTask={schTask} setTask={setTask} />
+                    <EditModal id={id} task={editTask} showEditModal={showEditModal} onClickCloseEditModal={onClickCloseEditModal} schTask={schTask} setTask={setTask} />
                   </div>
                 )}
               </Draggable>

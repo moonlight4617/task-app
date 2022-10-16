@@ -9,7 +9,7 @@ import { format } from 'date-fns'
 
 
 export const EditModal = (props) => {
-  const { showEditModal, onClickCloseEditModal, id, task, schTask, setSchTask, setTask } = props;
+  const { showEditModal, onClickCloseEditModal, id, task, schTask, setTask } = props;
   const [inputText, setInputText] = useState(task.task);
   const [note, setNote] = useState(task.note);
   const [selectedPerson, setSelectedPerson] = useState([]);
@@ -55,7 +55,6 @@ export const EditModal = (props) => {
       return t;
     })
     setTask(newTaskList);
-    // setSchTask(newTaskList);
     setInputText("");
 
     try {
