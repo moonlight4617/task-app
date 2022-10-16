@@ -4,16 +4,33 @@ import { Card } from './Card'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 import "./DropTask.css"
 import { Modal } from './Modal.jsx'
+import { EditModal } from './EditModal.jsx'
 
 export const DropTask = (props) => {
-  const { section, tasks, id } = props;
+  const { section, tasks, id, schTask, setSchTask, setTask } = props;
   const [show, setShow] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editTask, setEditTask] = useState("");
+
   const onClickAddTask = (e) => {
-    console.log(e.target.id);
+    // console.log(e.target.id);
     setShow(true);
   }
+
+  const onClickEditTask = (e) => {
+    const edit = tasks.find(task => task.id == e.target.id);
+    setEditTask(edit);
+    // setValue(edit.startDate);
+    // setEndValue(edit.compDate);
+    setShowEditModal(true);
+  }
+
   const onClickClose = () => {
     setShow(false);
+  }
+
+  const onClickCloseEditModal = () => {
+    setShowEditModal(false);
   }
 
   return (
@@ -36,7 +53,8 @@ export const DropTask = (props) => {
                       opacity: snapshot.isDragging ? "0.5" : "1",
                     }}
                   >
-                    <Card key={task.id} title={task.task} pic={task.pic} startDate={task.startDate} compDate={task.compDate} note={task.note} />
+                    <Card key={task.id} title={task.task} pic={task.pic} startDate={task.startDate} compDate={task.compDate} note={task.note} onClickEditTask={onClickEditTask} id={task.id} />
+                    <EditModal id={id} task={editTask} showEditModal={showEditModal} onClickCloseEditModal={onClickCloseEditModal} schTask={schTask} setSchTask={setSchTask} setTask={setTask} />
                   </div>
                 )}
               </Draggable>

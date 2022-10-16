@@ -1,19 +1,23 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './Modal.css'
 import Select from 'react-select'
 import { v4 as uuidv4 } from "uuid";
-import { collection, addDoc, getDocs, query, where, updateDoc, deleteDoc, doc } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, where, updateDoc, deleteDoc, doc, setDoc } from "firebase/firestore";
 import { db } from '../firebase';
+// import DatePicker from "react-datepicker"
+// import "react-datepicker/dist/react-datepicker.css"
 import { SimpleDatePicker } from "./DatePicker";
+import { format } from 'date-fns'
 
-export const Modal = (props) => {
-  const { show, onClickClose, id } = props;
-  const [inputText, setInputText] = useState("");
-  const [note, setNote] = useState("");
+
+export const EditModal = (props) => {
+  const { showEditModal, onClickCloseEditModal, id, task, schTask, setSchTask, setTask } = props;
+  const [inputText, setInputText] = useState(task.task);
+  const [note, setNote] = useState(task.note);
   const [selectedPerson, setSelectedPerson] = useState([]);
   const initialDate = new Date()
-  const [value, setValue] = React.useState(initialDate);
-  const [endValue, setEndValue] = React.useState(initialDate);
+  const [value, setValue] = useState("");
+  const [endValue, setEndValue] = useState("");
 
   const persons = [
     { value: '田邊', label: '田邊' },
@@ -35,20 +39,31 @@ export const Modal = (props) => {
     setNote(e.target.value);
   }
 
-  const onClickAdd = async () => {
+  // 更新に変更
+  const onClickUpdate = async () => {
     if (inputText === "") return;
-    const newTask = { id: uuidv4(), taskName: inputText, pic: selectedPerson }
-    // const newIncompleteList = [...incompleteList, newTask];
+    const editTask = {
+      id: id,
+      task: inputText,
+      pic: selectedPerson,
+      startDate: value.$d || value,
+      compDate: endValue.$d || endValue,
+      status: Number(id),
+      note: note
+    };
+    const newTaskList = schTask.map((t) => {
+      if (t.id === task.id) {
+        t = editTask;
+      }
+      return t;
+    })
+    setTask(newTaskList);
     const personValue = document.getElementById("pic")
-    // setIncompleteList(newIncompleteList);
     setInputText("");
     // setPicFlag(false);
-    // console.log(value.$d || value);
-    // console.log(endValue.$d || endValue);
 
     try {
-      const docRef = await addDoc(collection(db, "schedule"), {
-        // id: uuidv4(),
+      await setDoc(doc(db, "schedule", task.id), {
         task: inputText,
         pic: selectedPerson,
         startDate: value.$d || value,
@@ -56,19 +71,25 @@ export const Modal = (props) => {
         status: Number(id),
         note: note
       });
-      console.log("Document written with ID: ", docRef.id);
+      console.log("Document written with ID: ", task.id);
     } catch (e) {
       console.error("Error adding document: ", e);
     } finally {
-      onClickClose();
+      onClickCloseEditModal();
     }
   };
 
-  if (show) {
+  useEffect(() => {
+    setValue(task.startDate || initialDate)
+    setEndValue(task.compDate || initialDate)
+    setSelectedPerson(task.pic || []);
+  }, [task])
+
+  if (showEditModal) {
     return (
-      <div className="overlay" onClick={onClickClose}>
+      <div className="overlay" onClick={onClickCloseEditModal}>
         <div className="content" onClick={(e) => e.stopPropagation()}>
-          <p>新規タスク</p>
+          <p>タスクの編集</p>
           <div className="input-area">
             <input
               placeholder="タスクを入力"
@@ -87,10 +108,10 @@ export const Modal = (props) => {
               className="task-text"
             />
             <div className="button-area">
-              <button className="button" onClick={onClickAdd}>作成</button>
+              <button className="button" onClick={onClickUpdate}>更新</button>
             </div>
           </div>
-          <button onClick={onClickClose}>close</button>
+          <button onClick={onClickCloseEditModal}>close</button>
         </div>
       </div>
     )

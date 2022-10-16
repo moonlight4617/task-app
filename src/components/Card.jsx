@@ -1,21 +1,21 @@
 import React from 'react'
-import dayjs from 'dayjs';
 import { format } from 'date-fns'
 
 export const Card = (props) => {
-  const { title, startDate, compDate, pic, note } = props;
-  const ToDateStart = startDate.toDate();
-  const ToDateComp = compDate.toDate();
-  const formattedStartDate = format(ToDateStart, 'yyyy/MM/dd')
-  const formattedCompDate = format(ToDateComp, 'yyyy/MM/dd')
+  const { title, startDate, compDate, pic, note, onClickEditTask, id } = props;
+  const ToDateStart = startDate;
+  const ToDateComp = compDate;
+
+  const formattedStartDate = format(ToDateStart, 'yyyy/MM/dd') || null;
+  const formattedCompDate = format(ToDateComp, 'yyyy/MM/dd') || null;
   return (
     <>
-      <div className='card'>
-        <h3>{title}</h3>
-        <div>担当者：{pic}</div>
-        <div>開始日：{formattedStartDate}</div>
-        <div>完了日：{formattedCompDate}</div>
-        <div>備考：{note}</div>
+      <div className='card' onClick={onClickEditTask} id={id}>
+        <h3 id={id}>{title}</h3>
+        <div id={id}>担当者：{pic}</div>
+        <div id={id}>開始日：{formattedStartDate}</div>
+        <div id={id}>完了日：{formattedCompDate}</div>
+        <div id={id}>備考：{note}</div>
       </div>
     </>
   )

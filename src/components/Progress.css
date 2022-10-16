@@ -25,12 +25,9 @@
 .trello-section {
   width: 400px;
   /* border: 1px solid white; */
-  background: rgb(213, 169, 222);
-  background: linear-gradient(126deg,
-      rgb(163, 228, 207) 0%,
-      rgb(227, 188, 138) 96%);
+  background: rgb(173, 184, 230);
   padding: 10px;
-  border-radius: 10px;
+  border-radius: 6px;
   margin-left: 10px;
 }
 
@@ -38,12 +35,12 @@
   font-size: 1.2rem;
   font-weight: 700;
   margin: 10px 0 20px;
+  text-align: center;
 }
 
 .card {
-  padding: 30px;
-  background: rgb(145, 137, 145);
-  background: linear-gradient(126deg, rgb(159, 159, 237) 0%, rgb(68, 64, 69) 96%);
-  border-radius: 10px;
+  padding: 12px;
+  background: white;
+  border-radius: 6px;
   margin-top: 10px;
 }
