@@ -31,14 +31,13 @@ export const Progress = () => {
         // console.log(task);
         allTask.push(task);
       })
-      // console.log(allTask);
-      setSchTask(allTask);
+      // 変数に取得したタスク一覧を保持し、ステータス毎に振り分け
       setTask(allTask);
-      // 変数に取得したタスク一覧を保持
     });
   }, [])
 
   const setTask = (tasks) => {
+    setSchTask(tasks);
     // status == 0の場合は進行中に振り分け
     const inpro = tasks.filter(task => {
       return task.status === 0;

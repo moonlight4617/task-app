@@ -7,7 +7,7 @@ import { db } from '../firebase';
 import { SimpleDatePicker } from "./DatePicker";
 
 export const Modal = (props) => {
-  const { show, onClickClose, id } = props;
+  const { show, onClickClose, id, schTask, setSchTask, setTask } = props;
   const [inputText, setInputText] = useState("");
   const [note, setNote] = useState("");
   const [selectedPerson, setSelectedPerson] = useState([]);
@@ -37,11 +37,9 @@ export const Modal = (props) => {
 
   const onClickAdd = async () => {
     if (inputText === "") return;
-    const newTask = { id: uuidv4(), taskName: inputText, pic: selectedPerson }
     // const newIncompleteList = [...incompleteList, newTask];
     const personValue = document.getElementById("pic")
     // setIncompleteList(newIncompleteList);
-    setInputText("");
     // setPicFlag(false);
     // console.log(value.$d || value);
     // console.log(endValue.$d || endValue);
@@ -57,10 +55,24 @@ export const Modal = (props) => {
         note: note
       });
       console.log("Document written with ID: ", docRef.id);
+      const newTask = {
+        id: docRef.id,
+        task: inputText,
+        pic: selectedPerson,
+        startDate: value.$d || value,
+        compDate: endValue.$d || endValue,
+        status: Number(id),
+        note: note
+      }
+      const newTaskList = [...schTask, newTask];
+      // console.log(newTaskList);
+      setTask(newTaskList);
+      // setSchTask(newTaskList);
     } catch (e) {
       console.error("Error adding document: ", e);
     } finally {
       onClickClose();
+      setInputText("");
     }
   };
 

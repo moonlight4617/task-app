@@ -4,8 +4,6 @@ import Select from 'react-select'
 import { v4 as uuidv4 } from "uuid";
 import { collection, addDoc, getDocs, query, where, updateDoc, deleteDoc, doc, setDoc } from "firebase/firestore";
 import { db } from '../firebase';
-// import DatePicker from "react-datepicker"
-// import "react-datepicker/dist/react-datepicker.css"
 import { SimpleDatePicker } from "./DatePicker";
 import { format } from 'date-fns'
 
@@ -32,7 +30,6 @@ export const EditModal = (props) => {
   const onHandlePerson = (e) => {
     const persons = e.map((person) => (person.value))
     setSelectedPerson(persons);
-    // setPicFlag(true);
   };
 
   const onChangeNote = (e) => {
@@ -58,9 +55,8 @@ export const EditModal = (props) => {
       return t;
     })
     setTask(newTaskList);
-    const personValue = document.getElementById("pic")
+    // setSchTask(newTaskList);
     setInputText("");
-    // setPicFlag(false);
 
     try {
       await setDoc(doc(db, "schedule", task.id), {

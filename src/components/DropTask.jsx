@@ -62,7 +62,7 @@ export const DropTask = (props) => {
             {provided.placeholder}
           </div>
           <div onClick={onClickAddTask} id={id}>タスクの追加</div>
-          <Modal show={show} onClickClose={onClickClose} id={id} />
+          <Modal show={show} onClickClose={onClickClose} id={id} schTask={schTask} setSchTask={setSchTask} setTask={setTask} />
         </div>
       )}
     </Droppable>
