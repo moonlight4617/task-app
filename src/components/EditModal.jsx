@@ -13,6 +13,7 @@ export const EditModal = (props) => {
   const [inputText, setInputText] = useState(task.task);
   const [note, setNote] = useState(task.note);
   const [selectedPerson, setSelectedPerson] = useState([]);
+  const [selectedStatus, setSelectedStatus] = useState();
   const initialDate = new Date()
   const [value, setValue] = useState("");
   const [endValue, setEndValue] = useState("");
@@ -23,6 +24,25 @@ export const EditModal = (props) => {
     { value: '福島', label: '福島' }
   ]
 
+  const status = [
+    { value: 0, label: '進行中' },
+    { value: 1, label: '完了' },
+    { value: 2, label: '今後' }
+  ]
+
+  let personIndex = [];
+  if (Array.isArray(task.pic)) {
+    task.pic.forEach((person) => {
+      var index = persons.findIndex(e => e.value == person);
+      if (index !== -1) {
+        personIndex.push(index);
+      }
+    })
+  }
+
+  const picList = personIndex.map((p) => persons[p])
+
+
   const onChangeText = (e) => {
     setInputText(e.target.value);
   };
@@ -30,6 +50,11 @@ export const EditModal = (props) => {
   const onHandlePerson = (e) => {
     const persons = e.map((person) => (person.value))
     setSelectedPerson(persons);
+  };
+
+  const onChangeStatus = (e) => {
+    const status = e.value
+    setSelectedStatus(status);
   };
 
   const onChangeNote = (e) => {
@@ -45,7 +70,8 @@ export const EditModal = (props) => {
       pic: selectedPerson,
       startDate: value.$d || value,
       compDate: endValue.$d || endValue,
-      status: Number(id),
+      // status: Number(id),
+      status: selectedStatus,
       note: note
     };
     const newTaskList = schTask.map((t) => {
@@ -63,7 +89,8 @@ export const EditModal = (props) => {
         pic: selectedPerson,
         startDate: value.$d || value,
         compDate: endValue.$d || endValue,
-        status: Number(id),
+        // status: Number(id),
+        status: selectedStatus,
         note: note
       });
       console.log("Document written with ID: ", task.id);
@@ -75,9 +102,10 @@ export const EditModal = (props) => {
   };
 
   useEffect(() => {
-    setValue(task.startDate || initialDate)
-    setEndValue(task.compDate || initialDate)
+    setValue(task.startDate || initialDate);
+    setEndValue(task.compDate || initialDate);
     setSelectedPerson(task.pic || []);
+    setSelectedStatus(task.status);
   }, [task])
 
   if (showEditModal) {
@@ -93,9 +121,28 @@ export const EditModal = (props) => {
               className="task-text"
             />
             <div className="select-area">
-              <Select placeholder="担当者" options={persons} value={persons.value} onChange={onHandlePerson} isMulti id="pic" className="task-pic" />
+              <Select
+                placeholder="担当者"
+                options={persons}
+                // value={persons.value}
+                defaultValue={picList}
+                onChange={onHandlePerson}
+                isMulti id="pic"
+                className="task-pic" />
+              <Select
+                placeholder="ステータス"
+                options={status}
+                // value={status.value}
+                onChange={onChangeStatus}
+                className="task-pic"
+                defaultValue={status[task.status]}
+              />
             </div>
-            <SimpleDatePicker value={value} endValue={endValue} setValue={setValue} setEndValue={setEndValue} />
+            <SimpleDatePicker
+              value={value}
+              endValue={endValue}
+              setValue={setValue}
+              setEndValue={setEndValue} />
             <textarea
               placeholder="備考"
               value={note}

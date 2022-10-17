@@ -14,15 +14,12 @@ export const Card = (props) => {
   const onClickDelete = async (e) => {
     const result = window.confirm("削除しますか？");
     if (result) {
-      console.log("削除しました");
       const index = schTask.indexOf(task);
       let compDeleteTask = schTask;
       console.log(compDeleteTask);
       compDeleteTask.splice(index, 1);
       setTask(compDeleteTask);
       await deleteDoc(doc(db, "schedule", task.id));
-    } else {
-      console.log("削除取りやめ");
     }
   }
   return (
