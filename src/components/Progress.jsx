@@ -11,7 +11,7 @@ import { v4 as uuidv4 } from "uuid";
 
 
 export const Progress = () => {
-  const [data, setData] = useState(dummyData);
+  // const [data, setData] = useState(dummyData);
   // const [schTask, setSchTask] = useState([]);
   const [schTask, setSchTask] = useState([]);
   const [inProTask, setInProTask] = useState([]);
