@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { v4 as uuidv4 } from "uuid";
 import { Card } from './Card'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
-import "./DropTask.css"
 import { Modal } from './Modal.jsx'
 import { EditModal } from './EditModal.jsx'
 
