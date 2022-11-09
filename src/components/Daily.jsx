@@ -77,7 +77,7 @@ export const Daily = () => {
     setIncompleteList(newIncompleteList);
   };
 
-  // 削除した際に取り消し線が出るように変更
+  // 完了した際に取り消し線が出るように変更
   const onClickComplete = (id) => {
     const newIncompleteList = incompleteList.map((list) => {
       if (list.id === id) {
@@ -109,6 +109,12 @@ export const Daily = () => {
     // console.log(`${prevDay}に更新`);
   }
 
+  const onChangeToday = () => {
+    const today = new Date();
+    setDispDate(today);
+    // console.log(`${today}に更新`);
+  }
+
   useEffect(() => {
     let todayTask = [];
     const taskDate = new Date(dispDate.getFullYear(), dispDate.getMonth(), dispDate.getDate())
@@ -137,7 +143,7 @@ export const Daily = () => {
       <h1 className="title">TODO</h1>
       <div className="title-area">
         <span className="before" onClick={onChangePrevDate}>前日</span>
-        <h3 className="title">{formatDate}</h3>
+        <h3 className="title" onClick={onChangeToday}>{formatDate}</h3>
         <span className="next" onClick={onChangeNextDate}>翌日</span>
       </div>
       <div className="todo-body">

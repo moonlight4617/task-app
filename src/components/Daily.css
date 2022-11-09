@@ -73,12 +73,24 @@ li {
   color: #666;
 }
 
+.title:hover {
+  cursor: pointer;
+}
+
 .before {
   margin: 8px 0 0 20%;
 }
 
+.before:hover {
+  cursor: pointer;
+}
+
 .next {
   margin: 8px 20% 0 0;
+}
+
+.next:hover {
+  cursor: pointer;
 }
 
 /* .completed {
