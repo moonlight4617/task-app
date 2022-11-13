@@ -61,6 +61,13 @@ li {
   min-height: 200px;
 }
 
+.MH-area {
+  background-color: rgb(255, 255, 163);
+  padding: 8px;
+  margin: 8px;
+  min-height: 200px;
+}
+
 .title-area {
   display: flex;
   margin: 8px 0 0 0;
