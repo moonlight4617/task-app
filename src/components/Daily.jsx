@@ -44,7 +44,6 @@ export const Daily = () => {
 
   const onClickAdd = async () => {
     if (inputText === "") return;
-    // const newTask = { id: uuidv4(), taskName: inputText, pic: selectedPerson, category: selectedCategory, taskHour: inputHour, completeFlag: false }
 
     // その時の作成日時がdateに入るよう改修
     const newDate = new Date();
@@ -124,6 +123,7 @@ export const Daily = () => {
     // console.log(`${today}に更新`);
   }
 
+  // それぞれの担当者ごとの工数計算
   const setTaskHour = (MHList, tasks) => {
     const taskHoursEveryPic = [];
     MHList.map((mh) => {
@@ -177,31 +177,8 @@ export const Daily = () => {
           MHList.push(doc.data());
         })
         setMHListFromDB(MHList);
-
-        // それぞれの担当者ごとの工数計算
-        // MHList.map((mh) => {
-        //   let taskHours = 0
-        //   let compTaskHours = 0
-        //   todayTask.forEach((task) => {
-        //     if (task.pic.includes(mh.pic) && task.completeFlag == true) {
-        //       compTaskHours += Number(task.taskHour)
-        //     } else if (task.pic.includes(mh.pic)) {
-        //       taskHours += Number(task.taskHour)
-        //     }
-        //   })
-        //   taskHoursEveryPic.push({
-        //     pic: mh.pic,
-        //     operatingTime: mh.operatingTime,
-        //     taskHour: taskHours,
-        //     compTaskHour: compTaskHours
-        //   })
-        // })
-        // setManHoursList(taskHoursEveryPic);
-        // console.log(taskHoursEveryPic);
         setTaskHour(MHList, todayTask);
       });
-
-
   }, [dispDate])
 
   const formatDate = dispDate.getMonth() + 1 + "/" + dispDate.getDate();
