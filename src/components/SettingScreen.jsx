@@ -4,7 +4,7 @@ import { collection, addDoc, getDocs, query, where, updateDoc, deleteDoc, doc } 
 import { db } from '../firebase';
 import { useEffect, useState } from "react";
 import Select from 'react-select'
-
+import { EditRegularModal } from './EditRegularModal.jsx'
 
 export function SettingScreen() {
   const [MHListFromDB, setMHListFromDB] = useState([]);
@@ -18,6 +18,8 @@ export function SettingScreen() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [picFlag, setPicFlag] = useState(false);
   const [specificFlag, setSpecificFlag] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editTask, setEditTask] = useState("");
 
 
   const persons = MHListFromDB.map((mh) => (
@@ -64,6 +66,17 @@ export function SettingScreen() {
     setSelectedSpecific(specific);
     setSpecificFlag(true);
   };
+
+  const onClickEditTask = (e) => {
+    const edit = regularTask.find(task => task.id == e.target.id);
+    setEditTask(edit);
+    // console.log(edit);
+    setShowEditModal(true);
+  }
+
+  const onClickCloseEditModal = () => {
+    setShowEditModal(false);
+  }
 
   const onClickAdd = async () => {
     if (inputText === "") return;
@@ -185,13 +198,15 @@ export function SettingScreen() {
                 <th>指定</th>
               </tr>
             </thead>
+
             <tbody>
               {regularTask.map((task, index) => (
                 <tr key={index}>
-                  <td>{task.taskName}</td>
+                  <td onClick={onClickEditTask} id={task.id}>{task.taskName}</td>
                   <td>{task.pic}</td>
                   <td>{task.taskHour}</td>
                   <td>{task.regular}</td>
+                  <EditRegularModal task={editTask} showEditModal={showEditModal} onClickCloseEditModal={onClickCloseEditModal} persons={persons} />
                 </tr>
               ))}
             </tbody>
