@@ -1,6 +1,6 @@
 .setting {
-  display: flex;
-  align-items: flex-start;
+  /* display: flex;
+  align-items: flex-start; */
 }
 
 .setting-section {
@@ -17,4 +17,14 @@
   font-weight: 700;
   margin: 10px 0 20px;
   text-align: center;
+}
+
+.input-member {
+  margin: auto;
+}
+
+.member-table {
+  min-width: 30%;
+  max-width: 70%;
+  margin: auto;
 }

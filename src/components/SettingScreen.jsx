@@ -2,13 +2,32 @@ import React from 'react'
 import "./SettingScreen.css";
 import { collection, addDoc, getDocs, query, where, updateDoc, deleteDoc, doc, setDoc } from "firebase/firestore";
 import { db } from '../firebase';
-import { useEffect, useState } from "react";
-import Select from 'react-select'
-import { EditRegularModal } from './EditRegularModal.jsx'
+import { useEffect, useState, useRef } from "react";
+// import Select from 'react-select'
 import Modal from 'react-modal'
+import { styled, useTheme } from '@mui/material/styles';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import TextField from '@mui/material/TextField';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import Chip from '@mui/material/Chip';
+
 
 export function SettingScreen() {
   const [MHListFromDB, setMHListFromDB] = useState([]);
+  const [specificListFromDB, setSpecificListFromDB] = useState([]);
   const [regularTask, setRegularTask] = useState([]);
   const [inputMember, setInputMember] = useState("");
   const [inputEditMember, setInputEditMember] = useState("");
@@ -32,12 +51,14 @@ export function SettingScreen() {
   const [modalIsOpen, setIsOpen] = useState(false);
   const [memberModalIsOpen, setMemberModalIsOpen] = useState(false);
   const [modalTask, setModalTask] = useState("");
+  const memberNameRef = useRef(null);
+  const theme = useTheme();
 
 
-
-  const persons = MHListFromDB.map((mh) => (
-    { value: mh.pic, label: mh.pic }
-  ))
+  const persons = MHListFromDB.map((mh) => (mh.pic))
+  // const persons = MHListFromDB.map((mh) => (
+  //   { value: mh.pic, label: mh.pic }
+  // ))
 
   const specifics = [
     { value: "毎日", label: "毎日" },
@@ -65,6 +86,70 @@ export function SettingScreen() {
       width: '50%'
     }
   };
+
+  // テーブルスタイル
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: theme.palette.common.black,
+      color: theme.palette.common.white,
+    },
+    [`&.${tableCellClasses.body}`]: {
+      fontSize: 14,
+    },
+  }));
+
+  const StyledTableRow = styled(TableRow)(({ theme }) => ({
+    '&:nth-of-type(odd)': {
+      backgroundColor: theme.palette.action.hover,
+    },
+    // hide last border
+    '&:last-child td, &:last-child th': {
+      border: 0,
+    },
+  }));
+
+  // セレクトボックス用スタイル
+  const ITEM_HEIGHT = 48;
+  const ITEM_PADDING_TOP = 8;
+  const MenuProps = {
+    PaperProps: {
+      style: {
+        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+        width: 100,
+      },
+    },
+  };
+
+  function getStyles(name, personName, theme) {
+    return {
+      fontWeight:
+        personName.indexOf(name) === -1
+          ? theme.typography.fontWeightRegular
+          : theme.typography.fontWeightMedium,
+    };
+  }
+
+  const handleChangePerson = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setSelectedPerson(
+      // On autofill we get a stringified value.
+      typeof value === 'string' ? value.split(',') : value,
+    );
+  };
+
+  const handleChangeSpecific = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setSelectedSpecific(
+      // On autofill we get a stringified value.
+      typeof value === 'string' ? value.split(',') : value,
+    );
+  };
+
+
 
   function openModal(editTask) {
     // タスクの担当者が選択済みであれば、表示されるように
@@ -141,6 +226,10 @@ export function SettingScreen() {
   const onChangeHour = (e) => {
     setInputHour(e.target.value);
   };
+
+  // const handleChangeMemberName = () => {
+  //   setInputMember(memberNameRef.current.value);
+  // };
 
   const onChangeEditMHour = (e) => {
     setInputEditMHour(e.target.value);
@@ -313,8 +402,10 @@ export function SettingScreen() {
   useEffect(() => {
     let MHList = [];
     let regular = [];
+    let specific = [];
     const MHquerySnapshot = query(collection(db, "manHours"));
     const querySnapshot = query(collection(db, "daily"), where("regular", "!=", null));
+    const specificSnapshot = query(collection(db, "specific"));
 
     // DBから定常タスク取得
     getDocs(querySnapshot)
@@ -341,15 +432,87 @@ export function SettingScreen() {
         // console.log(MHList);
         setMHListFromDB(MHList);
       });
+
+    // DBから指定日リスト取得
+    getDocs(specificSnapshot)
+      .then((snapShot) => {
+        snapShot.forEach((doc) => {
+          // const id = { "id": doc.id }
+          const specificList = (doc.data().name);
+          specific.push(specificList);
+        })
+        // console.log(specific);
+        setSpecificListFromDB(specific);
+      });
   }, [])
 
+  console.log("レンダリング");
   return (
     <>
       <h3>設定</h3>
       <div className='setting'>
-        <div className='setting-section'>
+
+        <TableContainer component={Paper} className="member-table" sx={{ mb: 10 }}>
+          <Table sx={{ minWidth: 100 }} aria-label="customized table">
+            <TableHead>
+              <TableRow>
+                <StyledTableCell>メンバー</StyledTableCell>
+                <StyledTableCell>稼働可能時間</StyledTableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {MHListFromDB.map((mh, index) => (
+                <StyledTableRow key={index}>
+                  <StyledTableCell component="th" scope="row">
+                    {mh.pic}
+                  </StyledTableCell>
+                  <StyledTableCell>{mh.operatingTime}</StyledTableCell>
+                </StyledTableRow>
+              ))}
+              <TextField
+                id="outlined-basic"
+                label="メンバー名"
+                variant="outlined"
+                size="small"
+                value={inputMember}
+                onChange={onChangeMemberName}
+                className="input-member"
+                sx={{
+                  mt: 'auto',
+                  ml: 2
+                }}
+              />
+              <TextField
+                id="outlined-number"
+                label="稼働可能時間(h)"
+                type="number"
+                size="small"
+                InputProps={{ inputProps: { min: 0 } }}
+                value={inputHour}
+                onChange={onChangeHour}
+              // InputLabelProps={{
+              //   shrink: true,
+              // }}
+              />
+              {/* <input type="number" min="0" placeholder="稼働可能時間" value={inputEditMHour} onChange={onChangeEditMHour} className="" /> */}
+              <StyledTableRow>
+                <StyledTableCell colSpan="2">
+                  <Stack spacing={2} direction="row">
+                    <Button variant="contained" onClick={onClickAddMember} sx={{ mx: 'auto' }}>追加</Button>
+                  </Stack>
+                  {/* <div className="button-area">
+                    <button className="button" onClick={onClickAddMember}>追加</button> */}
+                  {/* </div> */}
+                </StyledTableCell>
+              </StyledTableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+
+        {/* <div className='setting-section'>
           <h4>メンバー 一覧</h4>
-          <table>
+          <table className='MuiTable-root css-1owb465'>
             <thead>
               <tr>
                 <th>メンバー</th>
@@ -404,8 +567,121 @@ export function SettingScreen() {
           <div className="button-area">
             <button className="button" onClick={onClickAddMember}>作成</button>
           </div>
-        </div>
-        <div className='setting-section'>
+        </div> */}
+
+        <TableContainer component={Paper} className="member-table" sx={{ mb: 8 }}>
+          <Table sx={{ minWidth: 100 }} aria-label="customized table">
+            <TableHead>
+              <TableRow>
+                <StyledTableCell>定常タスク</StyledTableCell>
+                <StyledTableCell>担当</StyledTableCell>
+                <StyledTableCell>工数</StyledTableCell>
+                <StyledTableCell>指定</StyledTableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {regularTask.map((task, index) => (
+                <StyledTableRow key={index}>
+                  <StyledTableCell component="th" scope="row">
+                    {task.taskName}
+                  </StyledTableCell>
+                  <StyledTableCell>{task.pic}</StyledTableCell>
+                  <StyledTableCell>{task.taskHour}</StyledTableCell>
+                  <StyledTableCell>{task.regular}</StyledTableCell>
+                </StyledTableRow>
+              ))}
+              <TextField
+                id="outlined-basic"
+                label="タスク名"
+                variant="outlined"
+                size="small"
+                value={inputRegularTask}
+                onChange={onChangeTaskName}
+              />
+              <Box sx={{ minWidth: 120 }}>
+                <FormControl sx={{ m: 0, minWidth: 100 }} size="small">
+                  <InputLabel id="demo-simple-select-label">担当者</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={selectedPerson}
+                    label="担当者"
+                    multiple
+                    onChange={handleChangePerson}
+                    MenuProps={MenuProps}
+                    renderValue={(selected) => (
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                        {selected.map((value) => (
+                          <Chip key={value} label={value} />
+                        ))}
+                      </Box>
+                    )}
+                  >
+                    {MHListFromDB.map((person, index) => (
+                      <MenuItem key={index} value={person.pic} style={getStyles(person.pic, selectedPerson, theme)}>{person.pic}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+              <TextField
+                id="outlined-basic"
+                label="工数"
+                type="number"
+                size="small"
+                InputProps={{ inputProps: { min: 0 } }}
+                value={inputEditRegularHour}
+                onChange={onChangeEditRegularHour}
+              />
+              {/* <input type="number" min="0" placeholder="工数" value={inputEditRegularHour} onChange={onChangeEditRegularHour} className="hm" /><br /> */}
+              <Box sx={{ minWidth: 120 }}>
+                <FormControl sx={{ m: 0, minWidth: 100 }} size="small">
+                  <InputLabel id="demo-simple-select-label">指定日</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={selectedSpecific}
+                    label="指定日"
+                    multiple
+                    onChange={handleChangeSpecific}
+                    MenuProps={MenuProps}
+                    renderValue={(selected) => (
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                        {selected.map((value) => (
+                          <Chip key={value} label={value} />
+                        ))}
+                      </Box>
+                    )}
+                  >
+                    {specificListFromDB.map((specific, index) => (
+                      <MenuItem key={index} value={specific} style={getStyles(specific, selectedSpecific, theme)}>{specific}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+
+              {/* <Select
+                placeholder="指定日"
+                options={specifics}
+                defaultValue={selectedDefaultSpecific}
+                onChange={onHandleEditSpecific}
+                isMulti id="pic"
+                className="task-pic" /> */}
+              <StyledTableRow>
+                <StyledTableCell colSpan="4">
+                  <Stack spacing={2} direction="row">
+                    <Button variant="contained" onClick={onClickAddRegularTask} sx={{ mx: 'auto' }}>作成</Button>
+                  </Stack>
+
+                  {/* <div className="button-area">
+                    <button className="button" onClick={onClickAddMember}>追加</button>
+                  </div> */}
+                </StyledTableCell>
+              </StyledTableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        {/* <div className='setting-section'>
           <h4>定常タスク</h4>
           <table>
             <thead>
@@ -416,11 +692,9 @@ export function SettingScreen() {
                 <th>指定</th>
               </tr>
             </thead>
-
             <tbody>
               {regularTask.map((task, index) => (
                 <tr key={index}>
-                  {/* <td onClick={onClickEditTask} id={task.id}>{task.taskName}</td> */}
                   <td onClick={() => openModal(task)}>{task.taskName}</td>
                   <td>{task.pic}</td>
                   <td>{task.taskHour}</td>
@@ -466,9 +740,6 @@ export function SettingScreen() {
                     </div>
                     <button className="" onClick={closeModal}>close</button>
                   </Modal>
-
-
-
                   <button className="icon" onClick={() => onClickDeleteRegularTask(task.id, index)}>
                     <i className="fa-solid fa-trash"></i>
                   </button>
@@ -476,7 +747,6 @@ export function SettingScreen() {
               ))}
             </tbody>
           </table>
-
           <input placeholder="タスク名"
             value={inputRegularTask}
             onChange={onChangeTaskName}
@@ -490,7 +760,7 @@ export function SettingScreen() {
           <div className="button-area">
             <button className="button" onClick={onClickAddRegularTask}>作成</button>
           </div>
-        </div>
+        </div> */}
       </div>
     </>
   )
