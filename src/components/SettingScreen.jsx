@@ -4,7 +4,7 @@ import { collection, addDoc, getDocs, query, where, updateDoc, deleteDoc, doc, s
 import { db } from '../firebase';
 import { useEffect, useState, useRef } from "react";
 // import Select from 'react-select'
-import Modal from 'react-modal'
+// import Modal from 'react-modal'
 import { styled, useTheme } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -23,6 +23,9 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Chip from '@mui/material/Chip';
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 
 export function SettingScreen() {
@@ -35,6 +38,7 @@ export function SettingScreen() {
   const [inputRegularTask, setInputRegularTask] = useState("");
   const [inputHour, setInputHour] = useState("");
   const [inputEditMHour, setInputEditMHour] = useState("");
+  const [editMemberId, setEditMemberId] = useState("");
   const [inputRegularHour, setInputRegularHour] = useState("");
   const [inputEditRegularHour, setInputEditRegularHour] = useState("");
   const [selectedPerson, setSelectedPerson] = useState([]);
@@ -50,6 +54,7 @@ export function SettingScreen() {
   // const [regularDay, setRegularDay] = useState("");
   const [modalIsOpen, setIsOpen] = useState(false);
   const [memberModalIsOpen, setMemberModalIsOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const [modalTask, setModalTask] = useState("");
   const memberNameRef = useRef(null);
   const theme = useTheme();
@@ -118,6 +123,19 @@ export function SettingScreen() {
         width: 100,
       },
     },
+  };
+
+  // モーダル用スタイル
+  const modalStyle = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    p: 4,
+    borderRadius: 2,
   };
 
   function getStyles(name, personName, theme) {
@@ -243,6 +261,15 @@ export function SettingScreen() {
     setInputEditRegularHour(e.target.value);
   };
 
+  const handleEditMemberOpen = (member) => {
+    setInputEditMember(member.pic);
+    setInputEditMHour(member.operatingTime);
+    setEditMemberId(member.id);
+    setOpen(true);
+  };
+
+  const handleEditMemberClose = () => setOpen(false);
+
   // const onChangeRegularDay = (e) => {
   //   setRegularDay(e.target.value);
   // };
@@ -321,6 +348,35 @@ export function SettingScreen() {
     }
   };
 
+  const onClickUpdateMember = async () => {
+    if (inputEditMember === "") return;
+    const editMember = {
+      id: editMemberId,
+      pic: inputEditMember,
+      operatingTime: inputEditMHour
+    };
+    const newMHList = MHListFromDB.map((list) => {
+      if (list.id !== editMemberId) {
+        return list
+      } else {
+        return editMember
+      }
+    })
+    setMHListFromDB(newMHList);
+
+    try {
+      await setDoc(doc(db, "manHours", editMemberId), {
+        pic: inputEditMember,
+        operatingTime: inputEditMHour
+      });
+      console.log("Document written with ID: ", editMemberId);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    } finally {
+      handleEditMemberClose();
+    }
+  };
+
   const onClickUpdateRegularTask = async (task) => {
     if (inputEditTask === "") return;
     const editTask = {
@@ -355,34 +411,6 @@ export function SettingScreen() {
     }
   };
 
-  const onClickUpdateMember = async (member) => {
-    if (inputEditMember === "") return;
-    const editMember = {
-      id: member.id,
-      pic: inputEditMember,
-      operatingTime: inputEditMHour
-    };
-    const newMHList = MHListFromDB.map((list) => {
-      if (list.id !== member.id) {
-        return list
-      } else {
-        return editMember
-      }
-    })
-    setMHListFromDB(newMHList);
-
-    try {
-      await setDoc(doc(db, "manHours", member.id), {
-        pic: inputEditMember,
-        operatingTime: inputEditMHour
-      });
-      console.log("Document written with ID: ", member.id);
-    } catch (e) {
-      console.error("Error adding document: ", e);
-    } finally {
-      closeMemberModal();
-    }
-  };
 
   const onClickDeleteMember = async (id, index) => {
     const NewMHList = [...MHListFromDB];
@@ -451,36 +479,77 @@ export function SettingScreen() {
     <>
       <h3>設定</h3>
       <div className='setting'>
-
         <TableContainer component={Paper} className="member-table" sx={{ mb: 10 }}>
           <Table sx={{ minWidth: 100 }} aria-label="customized table">
             <TableHead>
               <TableRow>
                 <StyledTableCell>メンバー</StyledTableCell>
-                <StyledTableCell>稼働可能時間</StyledTableCell>
+                <StyledTableCell>稼働可能時間(h)</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {MHListFromDB.map((mh, index) => (
                 <StyledTableRow key={index}>
-                  <StyledTableCell component="th" scope="row">
-                    {mh.pic}
-                  </StyledTableCell>
+                  <StyledTableCell component="th" scope="row" onClick={() => handleEditMemberOpen(mh)}>{mh.pic}</StyledTableCell>
                   <StyledTableCell>{mh.operatingTime}</StyledTableCell>
                 </StyledTableRow>
               ))}
+            </TableBody>
+          </Table>
+          <Box sx={{ m: 2 }}>
+            <TextField
+              id="outlined-basic"
+              label="メンバー名"
+              variant="outlined"
+              size="small"
+              value={inputMember}
+              onChange={onChangeMemberName}
+              className="input-member"
+            />
+            <TextField
+              id="outlined-number"
+              label="稼働可能時間(h)"
+              type="number"
+              size="small"
+              InputProps={{ inputProps: { min: 0 } }}
+              value={inputHour}
+              onChange={onChangeHour}
+              sx={{ ml: 1 }}
+            // InputLabelProps={{
+            //   shrink: true,
+            // }}
+            />
+          </Box>
+          <Stack>
+            <Button variant="contained" onClick={onClickAddMember} sx={{ mx: 'auto', mb: 2 }}>追加</Button>
+          </Stack>
+        </TableContainer>
+
+
+        <Modal
+          open={open}
+          onClose={handleEditMemberClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={modalStyle}>
+            <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ textAlign: "center" }}>
+              メンバー編集
+            </Typography>
+            <Box sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              mt: 2
+            }}>
               <TextField
                 id="outlined-basic"
                 label="メンバー名"
                 variant="outlined"
                 size="small"
-                value={inputMember}
-                onChange={onChangeMemberName}
+                value={inputEditMember}
+                onChange={onChangeEditMemberName}
                 className="input-member"
-                sx={{
-                  mt: 'auto',
-                  ml: 2
-                }}
+                sx={{ mr: 2 }}
               />
               <TextField
                 id="outlined-number"
@@ -488,26 +557,15 @@ export function SettingScreen() {
                 type="number"
                 size="small"
                 InputProps={{ inputProps: { min: 0 } }}
-                value={inputHour}
-                onChange={onChangeHour}
-              // InputLabelProps={{
-              //   shrink: true,
-              // }}
+                value={inputEditMHour}
+                onChange={onChangeEditMHour}
               />
-              {/* <input type="number" min="0" placeholder="稼働可能時間" value={inputEditMHour} onChange={onChangeEditMHour} className="" /> */}
-              <StyledTableRow>
-                <StyledTableCell colSpan="2">
-                  <Stack spacing={2} direction="row">
-                    <Button variant="contained" onClick={onClickAddMember} sx={{ mx: 'auto' }}>追加</Button>
-                  </Stack>
-                  {/* <div className="button-area">
-                    <button className="button" onClick={onClickAddMember}>追加</button> */}
-                  {/* </div> */}
-                </StyledTableCell>
-              </StyledTableRow>
-            </TableBody>
-          </Table>
-        </TableContainer>
+            </Box>
+            <Stack spacing={2} direction="row">
+              <Button variant="contained" onClick={onClickUpdateMember} sx={{ ml: 'auto', mr: 'auto', mt: 2 }}>更新</Button>
+            </Stack>
+          </Box>
+        </Modal>
 
 
         {/* <div className='setting-section'>
@@ -574,9 +632,9 @@ export function SettingScreen() {
             <TableHead>
               <TableRow>
                 <StyledTableCell>定常タスク</StyledTableCell>
-                <StyledTableCell>担当</StyledTableCell>
-                <StyledTableCell>工数</StyledTableCell>
-                <StyledTableCell>指定</StyledTableCell>
+                <StyledTableCell>担当者</StyledTableCell>
+                <StyledTableCell>工数(h)</StyledTableCell>
+                <StyledTableCell>指定日</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -590,95 +648,81 @@ export function SettingScreen() {
                   <StyledTableCell>{task.regular}</StyledTableCell>
                 </StyledTableRow>
               ))}
-              <TextField
-                id="outlined-basic"
-                label="タスク名"
-                variant="outlined"
-                size="small"
-                value={inputRegularTask}
-                onChange={onChangeTaskName}
-              />
-              <Box sx={{ minWidth: 120 }}>
-                <FormControl sx={{ m: 0, minWidth: 100 }} size="small">
-                  <InputLabel id="demo-simple-select-label">担当者</InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={selectedPerson}
-                    label="担当者"
-                    multiple
-                    onChange={handleChangePerson}
-                    MenuProps={MenuProps}
-                    renderValue={(selected) => (
-                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                        {selected.map((value) => (
-                          <Chip key={value} label={value} />
-                        ))}
-                      </Box>
-                    )}
-                  >
-                    {MHListFromDB.map((person, index) => (
-                      <MenuItem key={index} value={person.pic} style={getStyles(person.pic, selectedPerson, theme)}>{person.pic}</MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Box>
-              <TextField
-                id="outlined-basic"
-                label="工数"
-                type="number"
-                size="small"
-                InputProps={{ inputProps: { min: 0 } }}
-                value={inputEditRegularHour}
-                onChange={onChangeEditRegularHour}
-              />
-              {/* <input type="number" min="0" placeholder="工数" value={inputEditRegularHour} onChange={onChangeEditRegularHour} className="hm" /><br /> */}
-              <Box sx={{ minWidth: 120 }}>
-                <FormControl sx={{ m: 0, minWidth: 100 }} size="small">
-                  <InputLabel id="demo-simple-select-label">指定日</InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={selectedSpecific}
-                    label="指定日"
-                    multiple
-                    onChange={handleChangeSpecific}
-                    MenuProps={MenuProps}
-                    renderValue={(selected) => (
-                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                        {selected.map((value) => (
-                          <Chip key={value} label={value} />
-                        ))}
-                      </Box>
-                    )}
-                  >
-                    {specificListFromDB.map((specific, index) => (
-                      <MenuItem key={index} value={specific} style={getStyles(specific, selectedSpecific, theme)}>{specific}</MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Box>
-
-              {/* <Select
-                placeholder="指定日"
-                options={specifics}
-                defaultValue={selectedDefaultSpecific}
-                onChange={onHandleEditSpecific}
-                isMulti id="pic"
-                className="task-pic" /> */}
-              <StyledTableRow>
-                <StyledTableCell colSpan="4">
-                  <Stack spacing={2} direction="row">
-                    <Button variant="contained" onClick={onClickAddRegularTask} sx={{ mx: 'auto' }}>作成</Button>
-                  </Stack>
-
-                  {/* <div className="button-area">
-                    <button className="button" onClick={onClickAddMember}>追加</button>
-                  </div> */}
-                </StyledTableCell>
-              </StyledTableRow>
             </TableBody>
           </Table>
+          <Box sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            m: 2,
+          }}>
+            <TextField
+              id="outlined-basic"
+              label="タスク名"
+              variant="outlined"
+              size="small"
+              value={inputRegularTask}
+              onChange={onChangeTaskName}
+            />
+            <FormControl sx={{ ml: 1, minWidth: 100 }} size="small">
+              <InputLabel id="demo-simple-select-label">担当者</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={selectedPerson}
+                label="担当者"
+                multiple
+                onChange={handleChangePerson}
+                MenuProps={MenuProps}
+                renderValue={(selected) => (
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                    {selected.map((value) => (
+                      <Chip key={value} label={value} />
+                    ))}
+                  </Box>
+                )}
+              >
+                {MHListFromDB.map((person, index) => (
+                  <MenuItem key={index} value={person.pic} style={getStyles(person.pic, selectedPerson, theme)}>{person.pic}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <TextField
+              id="outlined-basic"
+              label="工数"
+              type="number"
+              size="small"
+              InputProps={{ inputProps: { min: 0 } }}
+              value={inputEditRegularHour}
+              onChange={onChangeEditRegularHour}
+              sx={{ ml: 1 }}
+            />
+            <FormControl sx={{ ml: 1, minWidth: 100 }} size="small">
+              <InputLabel id="demo-simple-select-label">指定日</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={selectedSpecific}
+                label="指定日"
+                multiple
+                onChange={handleChangeSpecific}
+                MenuProps={MenuProps}
+                renderValue={(selected) => (
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                    {selected.map((value) => (
+                      <Chip key={value} label={value} />
+                    ))}
+                  </Box>
+                )}
+              >
+                {specificListFromDB.map((specific, index) => (
+                  <MenuItem key={index} value={specific} style={getStyles(specific, selectedSpecific, theme)}>{specific}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
+          <Stack spacing={2} direction="row">
+            <Button variant="contained" onClick={onClickAddRegularTask} sx={{ mx: 'auto', mb: 2 }}>作成</Button>
+          </Stack>
         </TableContainer>
 
         {/* <div className='setting-section'>
