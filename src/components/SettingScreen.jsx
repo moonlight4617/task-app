@@ -3,8 +3,6 @@ import "./SettingScreen.css";
 import { collection, addDoc, getDocs, query, where, updateDoc, deleteDoc, doc, setDoc } from "firebase/firestore";
 import { db } from '../firebase';
 import { useEffect, useState, useRef } from "react";
-// import Select from 'react-select'
-// import Modal from 'react-modal'
 import { styled, useTheme } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -39,58 +37,32 @@ export function SettingScreen() {
   const [inputHour, setInputHour] = useState("");
   const [inputEditMHour, setInputEditMHour] = useState("");
   const [editMemberId, setEditMemberId] = useState("");
+  const [editRegularTaskId, setEditRegularTaskId] = useState("");
   const [inputRegularHour, setInputRegularHour] = useState("");
   const [inputEditRegularHour, setInputEditRegularHour] = useState("");
   const [selectedPerson, setSelectedPerson] = useState([]);
-  const [taskDefaultPerson, setTaskDefaultPerson] = useState([]);
+  const [selectedEditPerson, setSelectedEditPerson] = useState([]);
   const [selectedSpecific, setSelectedSpecific] = useState([]);
   const [selectedEditSpecific, setSelectedEditSpecific] = useState([]);
-  const [selectedDefaultSpecific, setSelectedDefaultSpecific] = useState([]);
-  // const [selectedCategory, setSelectedCategory] = useState("");
-  const [picFlag, setPicFlag] = useState(false);
-  const [specificFlag, setSpecificFlag] = useState(false);
-  // const [showEditModal, setShowEditModal] = useState(false);
-  // const [editTask, setEditTask] = useState("");
-  // const [regularDay, setRegularDay] = useState("");
-  const [modalIsOpen, setIsOpen] = useState(false);
-  const [memberModalIsOpen, setMemberModalIsOpen] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [modalTask, setModalTask] = useState("");
-  const memberNameRef = useRef(null);
+  const [openMember, setOpenMember] = useState(false);
+  const [openRegularTask, setOpenRegularTask] = useState(false);
   const theme = useTheme();
 
 
-  const persons = MHListFromDB.map((mh) => (mh.pic))
-  // const persons = MHListFromDB.map((mh) => (
-  //   { value: mh.pic, label: mh.pic }
-  // ))
+  // const persons = MHListFromDB.map((mh) => (mh.pic))
 
-  const specifics = [
-    { value: "毎日", label: "毎日" },
-    { value: "日曜", label: "日曜" },
-    { value: "月曜", label: "月曜" },
-    { value: "火曜", label: "火曜" },
-    { value: "水曜", label: "水曜" },
-    { value: "木曜", label: "木曜" },
-    { value: "金曜", label: "金曜" },
-    { value: "土曜", label: "土曜" },
-    { value: "月初", label: "月初" },
-    { value: "月末", label: "月末" },
-  ];
-
-  // モーダル用css
-  var subtitle;
-  const customStyles = {
-    content: {
-      top: '50%',
-      left: '50%',
-      // right: 'auto',
-      // bottom: 'auto',
-      // marginRight: '-50%',
-      transform: 'translate(-50%, -50%)',
-      width: '50%'
-    }
-  };
+  // const specifics = [
+  //   { value: "毎日", label: "毎日" },
+  //   { value: "日曜", label: "日曜" },
+  //   { value: "月曜", label: "月曜" },
+  //   { value: "火曜", label: "火曜" },
+  //   { value: "水曜", label: "水曜" },
+  //   { value: "木曜", label: "木曜" },
+  //   { value: "金曜", label: "金曜" },
+  //   { value: "土曜", label: "土曜" },
+  //   { value: "月初", label: "月初" },
+  //   { value: "月末", label: "月末" },
+  // ];
 
   // テーブルスタイル
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -138,6 +110,19 @@ export function SettingScreen() {
     borderRadius: 2,
   };
 
+  // 定常タスクモーダル用スタイル
+  const regularTaskModalStyle = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    minWidth: 600,
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    p: 4,
+    borderRadius: 2,
+  };
+
   function getStyles(name, personName, theme) {
     return {
       fontWeight:
@@ -157,6 +142,16 @@ export function SettingScreen() {
     );
   };
 
+  const handleChangeEditPerson = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setSelectedEditPerson(
+      // On autofill we get a stringified value.
+      typeof value === 'string' ? value.split(',') : value,
+    );
+  };
+
   const handleChangeSpecific = (event) => {
     const {
       target: { value },
@@ -167,63 +162,15 @@ export function SettingScreen() {
     );
   };
 
-
-
-  function openModal(editTask) {
-    // タスクの担当者が選択済みであれば、表示されるように
-    let personIndex = [];
-    if (editTask.pic.length > 0) {
-      editTask.pic.forEach((person) => {
-        var index = persons.findIndex(e => e.value == person);
-        if (index !== -1) {
-          personIndex.push(index);
-        }
-      })
-    }
-    const picList = personIndex.map((p) => persons[p])
-    setTaskDefaultPerson(picList);
-    const picListValue = picList.map((pic) => (pic.value))
-    setSelectedPerson(picListValue);
-
-    // 指定日があれば表示されるように
-    let regularIndex = [];
-    if (editTask.regular.length > 0) {
-      editTask.regular.forEach((regular) => {
-        var index = specifics.findIndex(e => e.value == regular);
-        if (index !== -1) {
-          regularIndex.push(index);
-        }
-      })
-    }
-    const regularList = regularIndex.map((p) => specifics[p])
-    setSelectedDefaultSpecific(regularList);
-    const regularListValue = regularList.map((regular) => (regular.value))
-    setSelectedEditSpecific(regularListValue);
-
-    setModalTask(editTask);
-    setInputEditTask(editTask.taskName);
-    setInputEditRegularHour(editTask.taskHour);
-    setIsOpen(editTask.id);
-  }
-
-  function openMemberModal(member) {
-    setInputEditMember(member.pic);
-    setInputEditMHour(member.operatingTime);
-    setMemberModalIsOpen(member.id);
-  }
-
-
-  function afterOpenModal() {
-    subtitle.style.color = '#3ab60b';
-  }
-
-  function closeModal() {
-    setIsOpen(false);
-  }
-
-  function closeMemberModal() {
-    setMemberModalIsOpen(false);
-  }
+  const handleChangeEditSpecific = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setSelectedEditSpecific(
+      // On autofill we get a stringified value.
+      typeof value === 'string' ? value.split(',') : value,
+    );
+  };
 
   const onChangeMemberName = (e) => {
     setInputMember(e.target.value);
@@ -245,10 +192,6 @@ export function SettingScreen() {
     setInputHour(e.target.value);
   };
 
-  // const handleChangeMemberName = () => {
-  //   setInputMember(memberNameRef.current.value);
-  // };
-
   const onChangeEditMHour = (e) => {
     setInputEditMHour(e.target.value);
   };
@@ -265,43 +208,21 @@ export function SettingScreen() {
     setInputEditMember(member.pic);
     setInputEditMHour(member.operatingTime);
     setEditMemberId(member.id);
-    setOpen(true);
+    setOpenMember(true);
   };
 
-  const handleEditMemberClose = () => setOpen(false);
+  const handleEditMemberClose = () => setOpenMember(false);
 
-  // const onChangeRegularDay = (e) => {
-  //   setRegularDay(e.target.value);
-  // };
-
-  const onHandlePerson = (e) => {
-    const persons = e.map((person) => (person.value))
-    setSelectedPerson(persons);
-    setPicFlag(true);
+  const handleEditRegularTaskOpen = (task) => {
+    setEditRegularTaskId(task.id);
+    setInputEditTask(task.taskName);
+    setSelectedEditPerson(task.pic);
+    setInputEditRegularHour(task.taskHour);
+    setSelectedEditSpecific(task.regular);
+    setOpenRegularTask(true);
   };
 
-  const onHandleSpecific = (e) => {
-    const specific = e.map((specific) => (specific.value))
-    setSelectedSpecific(specific);
-    setSpecificFlag(true);
-  };
-
-  const onHandleEditSpecific = (e) => {
-    const specific = e.map((specific) => (specific.value))
-    console.log(specific);
-    setSelectedEditSpecific(specific);
-    // setSpecificFlag(true);
-  };
-
-  // const onClickEditTask = (e) => {
-  //   const edit = regularTask.find(task => task.id == e.target.id);
-  //   setEditTask(edit);
-  //   setShowEditModal(true);
-  // }
-
-  // const onClickCloseEditModal = () => {
-  //   setShowEditModal(false);
-  // }
+  const handleEditRegularTaskClose = () => setOpenRegularTask(false);
 
   const onClickAddMember = async () => {
     if (inputMember === "") return;
@@ -340,8 +261,8 @@ export function SettingScreen() {
       setRegularTask([...regularTask, newRegularTask])
       setInputRegularTask("");
       setInputRegularHour("");
-      setPicFlag(false);
-      setSpecificFlag(false);
+      setSelectedPerson([]);
+      setSelectedSpecific([]);
       console.log("Document written with ID: ", docRef.id);
     } catch (e) {
       console.error("Error adding document: ", e);
@@ -377,18 +298,18 @@ export function SettingScreen() {
     }
   };
 
-  const onClickUpdateRegularTask = async (task) => {
+  const onClickUpdateRegularTask = async () => {
     if (inputEditTask === "") return;
     const editTask = {
-      id: task.id,
+      id: editRegularTaskId,
       taskName: inputEditTask,
-      pic: selectedPerson,
+      pic: selectedEditPerson,
       regular: selectedEditSpecific,
       taskHour: inputEditRegularHour
     };
 
     const newRegularTaskList = regularTask.map((t) => {
-      if (t.id !== task.id) {
+      if (t.id !== editRegularTaskId) {
         return t
       } else {
         return editTask
@@ -397,17 +318,17 @@ export function SettingScreen() {
     setRegularTask(newRegularTaskList);
 
     try {
-      await setDoc(doc(db, "daily", task.id), {
+      await setDoc(doc(db, "daily", editRegularTaskId), {
         taskName: inputEditTask,
-        pic: selectedPerson,
+        pic: selectedEditPerson,
         regular: selectedEditSpecific,
         taskHour: inputEditRegularHour
       });
-      console.log("Document written with ID: ", task.id);
+      console.log("Document written with ID: ", editRegularTaskId);
     } catch (e) {
       console.error("Error adding document: ", e);
     } finally {
-      closeModal();
+      handleEditRegularTaskClose();
     }
   };
 
@@ -474,7 +395,6 @@ export function SettingScreen() {
       });
   }, [])
 
-  console.log("レンダリング");
   return (
     <>
       <h3>設定</h3>
@@ -485,13 +405,34 @@ export function SettingScreen() {
               <TableRow>
                 <StyledTableCell>メンバー</StyledTableCell>
                 <StyledTableCell>稼働可能時間(h)</StyledTableCell>
+                <StyledTableCell></StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {MHListFromDB.map((mh, index) => (
                 <StyledTableRow key={index}>
-                  <StyledTableCell component="th" scope="row" onClick={() => handleEditMemberOpen(mh)}>{mh.pic}</StyledTableCell>
+                  <StyledTableCell
+                    component="th"
+                    scope="row"
+                    onClick={() => handleEditMemberOpen(mh)}
+                    sx={{
+                      "&:hover": {
+                        cursor: 'pointer',
+                      },
+                    }}
+                  >
+                    {mh.pic}
+                  </StyledTableCell>
                   <StyledTableCell>{mh.operatingTime}</StyledTableCell>
+                  <StyledTableCell>
+                    <DeleteIcon
+                      onClick={() => onClickDeleteMember(mh.id, index)}
+                      sx={{
+                        "&:hover": {
+                          cursor: 'pointer',
+                        },
+                      }} />
+                  </StyledTableCell>
                 </StyledTableRow>
               ))}
             </TableBody>
@@ -525,9 +466,8 @@ export function SettingScreen() {
           </Stack>
         </TableContainer>
 
-
         <Modal
-          open={open}
+          open={openMember}
           onClose={handleEditMemberClose}
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
@@ -567,66 +507,6 @@ export function SettingScreen() {
           </Box>
         </Modal>
 
-
-        {/* <div className='setting-section'>
-          <h4>メンバー 一覧</h4>
-          <table className='MuiTable-root css-1owb465'>
-            <thead>
-              <tr>
-                <th>メンバー</th>
-                <th>稼働可能時間</th>
-              </tr>
-            </thead>
-            <tbody>
-              {MHListFromDB.map((mh, index) => (
-                <div key={index}>
-                  <tr>
-                    <td onClick={() => openMemberModal(mh)}>{mh.pic}</td>
-                    <td>{mh.operatingTime}h</td>
-                    <button className="icon" onClick={() => onClickDeleteMember(mh.id, index)}>
-                      <i className="fa-solid fa-trash"></i>
-                    </button>
-                  </tr>
-                  <Modal
-                    isOpen={mh.id == memberModalIsOpen}
-                    onAfterOpen={afterOpenModal}
-                    onRequestClose={closeMemberModal}
-                    contentLabel="Example Modal"
-                    ariaHideApp={false}
-                    overlayClassName="overlay"
-                    style={customStyles}
-                  >
-                    <h2 ref={_subtitle => (subtitle = _subtitle)}>メンバー編集</h2>
-                    <div className="input-area">
-                      <input placeholder="メンバー名"
-                        value={inputEditMember}
-                        onChange={onChangeEditMemberName}
-                        className="">
-                      </input>
-                      <input type="number" min="0" placeholder="稼働可能時間" value={inputEditMHour} onChange={onChangeEditMHour} className="hm" />
-                      <div className="button-area">
-                        <button className="button" onClick={() => onClickUpdateMember(mh)}>更新</button>
-                      </div>
-                    </div>
-                    <button className="" onClick={closeMemberModal}>close</button>
-                  </Modal>
-                </div>
-              ))}
-            </tbody>
-          </table>
-          <div className="select-area">
-            <input placeholder="メンバー名"
-              value={inputMember}
-              onChange={onChangeMemberName}
-              className="">
-            </input>
-            <input type="number" min="0" placeholder="稼働可能時間" value={inputHour} onChange={onChangeHour} className="hm" />
-          </div>
-          <div className="button-area">
-            <button className="button" onClick={onClickAddMember}>作成</button>
-          </div>
-        </div> */}
-
         <TableContainer component={Paper} className="member-table" sx={{ mb: 8 }}>
           <Table sx={{ minWidth: 100 }} aria-label="customized table">
             <TableHead>
@@ -635,17 +515,36 @@ export function SettingScreen() {
                 <StyledTableCell>担当者</StyledTableCell>
                 <StyledTableCell>工数(h)</StyledTableCell>
                 <StyledTableCell>指定日</StyledTableCell>
+                <StyledTableCell></StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {regularTask.map((task, index) => (
                 <StyledTableRow key={index}>
-                  <StyledTableCell component="th" scope="row">
+                  <StyledTableCell
+                    component="th"
+                    scope="row"
+                    onClick={() => handleEditRegularTaskOpen(task)}
+                    sx={{
+                      "&:hover": {
+                        cursor: 'pointer',
+                      },
+                    }}
+                  >
                     {task.taskName}
                   </StyledTableCell>
                   <StyledTableCell>{task.pic}</StyledTableCell>
                   <StyledTableCell>{task.taskHour}</StyledTableCell>
                   <StyledTableCell>{task.regular}</StyledTableCell>
+                  <StyledTableCell>
+                    <DeleteIcon
+                      onClick={() => onClickDeleteRegularTask(task.id, index)}
+                      sx={{
+                        "&:hover": {
+                          cursor: 'pointer',
+                        },
+                      }} />
+                  </StyledTableCell>
                 </StyledTableRow>
               ))}
             </TableBody>
@@ -692,8 +591,8 @@ export function SettingScreen() {
               type="number"
               size="small"
               InputProps={{ inputProps: { min: 0 } }}
-              value={inputEditRegularHour}
-              onChange={onChangeEditRegularHour}
+              value={inputRegularHour}
+              onChange={onChangeRegularHour}
               sx={{ ml: 1 }}
             />
             <FormControl sx={{ ml: 1, minWidth: 100 }} size="small">
@@ -725,86 +624,92 @@ export function SettingScreen() {
           </Stack>
         </TableContainer>
 
-        {/* <div className='setting-section'>
-          <h4>定常タスク</h4>
-          <table>
-            <thead>
-              <tr>
-                <th>タスク名</th>
-                <th>担当</th>
-                <th>工数</th>
-                <th>指定</th>
-              </tr>
-            </thead>
-            <tbody>
-              {regularTask.map((task, index) => (
-                <tr key={index}>
-                  <td onClick={() => openModal(task)}>{task.taskName}</td>
-                  <td>{task.pic}</td>
-                  <td>{task.taskHour}</td>
-                  <td>{task.regular}</td>
-                  <Modal
-                    isOpen={task.id == modalIsOpen}
-                    onAfterOpen={afterOpenModal}
-                    onRequestClose={closeModal}
-                    contentLabel="Example Modal"
-                    ariaHideApp={false}
-                    overlayClassName="overlay"
-                    style={customStyles}
-                  >
-                    <h2 ref={_subtitle => (subtitle = _subtitle)}>{modalTask.taskName}</h2>
-                    <div className="input-area">
-                      <input
-                        placeholder="タスクを入力"
-                        value={inputEditTask}
-                        onChange={onChangeEditTaskName}
-                        className="task-text"
-                      />
-                      <div className="select-area">
-                        <Select
-                          placeholder="担当者"
-                          options={persons}
-                          // value={persons.value}
-                          defaultValue={taskDefaultPerson}
-                          onChange={onHandlePerson}
-                          isMulti id="pic"
-                          className="task-pic" />
-                        <input type="number" min="0" placeholder="工数" value={inputEditRegularHour} onChange={onChangeEditRegularHour} className="hm" /><br />
-                        <Select
-                          placeholder="指定日"
-                          options={specifics}
-                          defaultValue={selectedDefaultSpecific}
-                          onChange={onHandleEditSpecific}
-                          isMulti id="pic"
-                          className="task-pic" />
-                      </div>
-                      <div className="button-area">
-                        <button className="button" onClick={() => onClickUpdateRegularTask(modalTask)}>更新</button>
-                      </div>
-                    </div>
-                    <button className="" onClick={closeModal}>close</button>
-                  </Modal>
-                  <button className="icon" onClick={() => onClickDeleteRegularTask(task.id, index)}>
-                    <i className="fa-solid fa-trash"></i>
-                  </button>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <input placeholder="タスク名"
-            value={inputRegularTask}
-            onChange={onChangeTaskName}
-            className="">
-          </input>
-          <div className="select-area">
-            <Select placeholder="担当者" options={persons} value={picFlag && persons.value} onChange={onHandlePerson} isMulti id="pic" className="pic-select" />
-            <input type="number" min="0" placeholder="工数" value={inputRegularHour} onChange={onChangeRegularHour} className="hm" /><br />
-            <Select placeholder="指定日" options={specifics} value={specificFlag && specifics.value} onChange={onHandleSpecific} isMulti id="pic" className="pic-select" />
-          </div>
-          <div className="button-area">
-            <button className="button" onClick={onClickAddRegularTask}>作成</button>
-          </div>
-        </div> */}
+        <Modal
+          open={openRegularTask}
+          onClose={handleEditRegularTaskClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={regularTaskModalStyle}>
+            <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ textAlign: "center" }}>
+              定常タスク編集
+            </Typography>
+            <Box sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              mt: 2
+            }}>
+              <TextField
+                id="outlined-basic"
+                label="定常タスク名"
+                variant="outlined"
+                size="small"
+                sx={{ minWidth: 250 }}
+                value={inputEditTask}
+                onChange={onChangeEditTaskName}
+              />
+              <FormControl sx={{ ml: 1, minWidth: 100 }} size="small">
+                <InputLabel id="demo-simple-select-label">担当者</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={selectedEditPerson}
+                  label="担当者"
+                  multiple
+                  onChange={handleChangeEditPerson}
+                  MenuProps={MenuProps}
+                  renderValue={(selected) => (
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                      {selected.map((value) => (
+                        <Chip key={value} label={value} />
+                      ))}
+                    </Box>
+                  )}
+                >
+                  {MHListFromDB.map((person, index) => (
+                    <MenuItem key={index} value={person.pic} style={getStyles(person.pic, selectedEditPerson, theme)}>{person.pic}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <TextField
+                id="outlined-basic"
+                label="工数"
+                type="number"
+                size="small"
+                InputProps={{ inputProps: { min: 0 } }}
+                value={inputEditRegularHour}
+                onChange={onChangeEditRegularHour}
+                sx={{ ml: 1, width: 70 }}
+              />
+              <FormControl sx={{ ml: 1, minWidth: 100 }} size="small">
+                <InputLabel id="demo-simple-select-label">指定日</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={selectedEditSpecific}
+                  label="指定日"
+                  multiple
+                  onChange={handleChangeEditSpecific}
+                  MenuProps={MenuProps}
+                  renderValue={(selected) => (
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                      {selected.map((value) => (
+                        <Chip key={value} label={value} />
+                      ))}
+                    </Box>
+                  )}
+                >
+                  {specificListFromDB.map((specific, index) => (
+                    <MenuItem key={index} value={specific} style={getStyles(specific, selectedEditSpecific, theme)}>{specific}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+            <Stack spacing={2} direction="row">
+              <Button variant="contained" onClick={onClickUpdateRegularTask} sx={{ ml: 'auto', mr: 'auto', mt: 2 }}>更新</Button>
+            </Stack>
+          </Box>
+        </Modal>
       </div>
     </>
   )
