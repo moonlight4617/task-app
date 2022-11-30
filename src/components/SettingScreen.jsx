@@ -1,5 +1,4 @@
 import React from 'react'
-import "./SettingScreen.css";
 import { collection, addDoc, getDocs, query, where, updateDoc, deleteDoc, doc, setDoc } from "firebase/firestore";
 import { db } from '../firebase';
 import { useEffect, useState, useRef } from "react";
@@ -399,7 +398,7 @@ export function SettingScreen() {
     <>
       <h3>設定</h3>
       <div className='setting'>
-        <TableContainer component={Paper} className="member-table" sx={{ mb: 10 }}>
+        <TableContainer component={Paper} sx={{ mb: 10, maxWidth: '70%', mx: 'auto' }}>
           <Table sx={{ minWidth: 100 }} aria-label="customized table">
             <TableHead>
               <TableRow>
@@ -507,7 +506,7 @@ export function SettingScreen() {
           </Box>
         </Modal>
 
-        <TableContainer component={Paper} className="member-table" sx={{ mb: 8 }}>
+        <TableContainer component={Paper} sx={{ mb: 8, maxWidth: '70%', mx: 'auto' }}>
           <Table sx={{ minWidth: 100 }} aria-label="customized table">
             <TableHead>
               <TableRow>
