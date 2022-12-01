@@ -10,12 +10,14 @@ import {
   Link
 } from "react-router-dom";
 import { SettingScreen } from "./components/SettingScreen";
+import { ResponsiveAppBar } from "./components/header";
 
 export const App = () => {
 
   return (
     <>
-      <Router>
+      <ResponsiveAppBar />
+      {/* <Router>
         <nav>
           <Link to="/daily">Daily</Link>
           <Link to="/progress">Progress</Link>
@@ -29,7 +31,7 @@ export const App = () => {
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/setting" element={<SettingScreen />} />
         </Routes>
-      </Router>
+      </Router> */}
     </>
   );
 };
