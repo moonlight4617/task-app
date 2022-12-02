@@ -47,22 +47,6 @@ export function SettingScreen() {
   const [openRegularTask, setOpenRegularTask] = useState(false);
   const theme = useTheme();
 
-
-  // const persons = MHListFromDB.map((mh) => (mh.pic))
-
-  // const specifics = [
-  //   { value: "毎日", label: "毎日" },
-  //   { value: "日曜", label: "日曜" },
-  //   { value: "月曜", label: "月曜" },
-  //   { value: "火曜", label: "火曜" },
-  //   { value: "水曜", label: "水曜" },
-  //   { value: "木曜", label: "木曜" },
-  //   { value: "金曜", label: "金曜" },
-  //   { value: "土曜", label: "土曜" },
-  //   { value: "月初", label: "月初" },
-  //   { value: "月末", label: "月末" },
-  // ];
-
   // テーブルスタイル
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -396,8 +380,7 @@ export function SettingScreen() {
 
   return (
     <>
-      <h3>設定</h3>
-      <div className='setting'>
+      <div style={{ marginTop: '40px' }}>
         <TableContainer component={Paper} sx={{ mb: 10, maxWidth: '70%', mx: 'auto' }}>
           <Table sx={{ minWidth: 100 }} aria-label="customized table">
             <TableHead>
