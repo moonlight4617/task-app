@@ -4,16 +4,18 @@
 }
 
 .button:hover {
-  background-color: pink;
+  background-color: #009;
   color: white;
   cursor: pointer;
 }
 
 .button {
-  border-radius: 16px;
+  border-radius: 12px;
+  /* border: solid 1px #CCC; */
   border: none;
-  padding: 4px 36px;
+  padding: 8px 28px;
   min-height: 30px;
-  background-color: white;
-  margin: 4px 0 0 0;
+  background-color: #06C;
+  color: white;
+  margin: 12px 0 0 0;
 }

@@ -8,9 +8,6 @@ import { collection, addDoc, getDocs, query, where, updateDoc, deleteDoc, doc } 
 import { db } from '../firebase';
 import "./Daily.css"
 import { ManHours } from "./ManHours";
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
-import Box from '@mui/material/Box';
 
 
 export const Daily = () => {
@@ -188,10 +185,11 @@ export const Daily = () => {
 
   return (
     <>
+      <h1 className="title">TODO</h1>
       <div className="title-area">
-        <span className="before" onClick={onChangePrevDate}><NavigateBeforeIcon /></span>
-        <h1 className="title" onClick={onChangeToday}>{formatDate}</h1>
-        <span className="next" onClick={onChangeNextDate}><NavigateNextIcon /></span>
+        <span className="before" onClick={onChangePrevDate}>前日</span>
+        <h3 className="title" onClick={onChangeToday}>{formatDate}</h3>
+        <span className="next" onClick={onChangeNextDate}>翌日</span>
       </div>
       <div className="todo-body">
         <InputTodo
@@ -205,14 +203,11 @@ export const Daily = () => {
           onChangeCategory={onChangeCategory}
           onClick={onClickAdd}
         />
-        <hr style={{ width: "80%" }} />
-        <h4 className="section-title">タスク一覧</h4>
         <Incomplete
           incompleteList={incompleteList}
           onClickComplete={onClickComplete}
           onClickDelete={onClickDelete}
         />
-        <h4 className="section-title">工数カウント</h4>
         <ManHours manHoursList={manHoursList} />
       </div>
     </>
