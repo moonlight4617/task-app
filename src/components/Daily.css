@@ -9,11 +9,13 @@ input {
 }
 
 .text-input {
-  margin: 4px auto;
-  border-radius: 16px;
+  margin: 4px auto 15px auto;
+  border-radius: 8px;
   min-width: 95%;
   min-height: 25px;
   font-size: medium;
+  border: solid 1px;
+  border-color: #CCC;
 }
 
 .select-area {
@@ -28,12 +30,14 @@ input {
 
 .pic-select {
   width: 60%;
-  margin: 0 4px 0 0;
+  margin: 0 8px 0 8px;
 }
 
 .hm {
   width: 10%;
   font-size: medium;
+  border: solid 1px #CCC;
+  border-radius: 8px;
 }
 
 li {
@@ -41,16 +45,20 @@ li {
 }
 
 .input-area {
-  background-color: #ffe7c5;
-  padding: 8px;
-  margin: 8px;
+  /* background-color: #ffe7c5; */
+  padding: 20px;
+  margin: 30px 12px 50px 12px;
+  border: solid gray;
+  border-radius: 16px;
+  border-width: 1px;
+  box-shadow: 0 3px 7px 0 rgba(0, 0, 0, .5);
 }
 
 .incomplete-area {
-  background-color: #dbfff2;
+  /* background-color: #dbfff2; */
   padding: 8px;
   margin: 8px;
-  min-height: 200px;
+  min-height: 100px;
 }
 
 .complete-area {
@@ -62,15 +70,15 @@ li {
 }
 
 .MH-area {
-  background-color: rgb(255, 255, 163);
+  /* background-color: rgb(255, 255, 163); */
   padding: 8px;
   margin: 8px;
-  min-height: 200px;
+  min-height: 100px;
 }
 
 .title-area {
   display: flex;
-  margin: 8px 0 0 0;
+  margin: 30px 0 0 0;
 }
 
 .title {
@@ -106,6 +114,12 @@ li {
 } */
 
 .todo-body {
-  width: 80%;
+  width: 70%;
   margin: 0 auto;
+}
+
+.section-title {
+  text-align: center;
+  color: #666;
+  margin-top: 40px;
 }

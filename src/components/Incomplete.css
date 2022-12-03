@@ -43,11 +43,10 @@
 
 .pic {
   margin: 0 0 0 0.2rem;
-  border: 1px solid;
+  border: none;
   padding: 0.2rem 0.75rem;
   border-radius: 16px;
-  background-color: rgb(32, 155, 237);
-  color: white;
+  background-color: #DCDCDC;
 }
 
 .pic-area {
