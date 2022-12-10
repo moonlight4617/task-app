@@ -26,8 +26,21 @@
   min-width: 90%;
   min-height: 35px;
   font-size: medium;
+  border: solid 1px #CCC;
+}
+
+.modal-note {
+  margin: 4px auto;
+  border-radius: 4px;
+  min-width: 90%;
+  min-height: 70px;
+  border: solid 1px #CCC;
 }
 
 .task-pic {
-  margin: 0 0 8px 0;
+  margin-bottom: 8px;
+}
+
+.task-date {
+  margin: 4px 0;
 }

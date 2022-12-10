@@ -1,31 +1,27 @@
-/* * {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-} */
-
-/* body {
-  background: rgb(61, 93, 189);
-  background: linear-gradient(
-    126deg,
-    rgba(61, 93, 189, 1) 0%,
-    rgba(33, 63, 107, 1) 96%
-  );
-  height: 100vh;
-  color: #e4e4e4;
-  line-height: 1.5;
-  font-family: "M PLUS Rounded 1c";
-} */
-
 .trello {
   display: flex;
   align-items: flex-start;
 }
 
-.trello-section {
+.progress-task {
   width: 400px;
-  /* border: 1px solid white; */
-  background: rgb(173, 184, 230);
+  background: rgb(162, 192, 225);
+  padding: 10px;
+  border-radius: 6px;
+  margin-left: 10px;
+}
+
+.complete-task {
+  width: 400px;
+  background: rgb(205, 159, 213);
+  padding: 10px;
+  border-radius: 6px;
+  margin-left: 10px;
+}
+
+.foward-task {
+  width: 400px;
+  background: rgb(161, 213, 160);
   padding: 10px;
   border-radius: 6px;
   margin-left: 10px;
@@ -38,9 +34,28 @@
   text-align: center;
 }
 
+.all-task {
+  padding: 40px 20px;
+}
+
 .card {
   padding: 12px;
   background: white;
   border-radius: 6px;
-  margin-top: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 3px 7px 0 rgba(0, 0, 0, .5);
+}
+
+.add-task {
+  /* padding: 12px; */
+  background: white;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  box-shadow: 0 3px 7px 0 rgba(0, 0, 0, .5);
+  text-align: center;
+  padding: 18px 0;
+}
+
+.add-task:hover {
+  cursor: grab;
 }

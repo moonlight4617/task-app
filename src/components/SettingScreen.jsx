@@ -409,9 +409,11 @@ export function SettingScreen() {
                   <StyledTableCell>
                     <DeleteIcon
                       onClick={() => onClickDeleteMember(mh.id, index)}
+                      color="action"
                       sx={{
                         "&:hover": {
                           cursor: 'pointer',
+                          color: 'black'
                         },
                       }} />
                   </StyledTableCell>
@@ -521,10 +523,12 @@ export function SettingScreen() {
                   <StyledTableCell>
                     <DeleteIcon
                       onClick={() => onClickDeleteRegularTask(task.id, index)}
+                      color="action"
                       sx={{
                         "&:hover": {
                           cursor: 'pointer',
-                        },
+                          color: 'black'
+                        }
                       }} />
                   </StyledTableCell>
                 </StyledTableRow>
