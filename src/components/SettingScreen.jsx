@@ -39,8 +39,9 @@ export function SettingScreen() {
   const [inputRegularHour, setInputRegularHour] = useState("");
   const [inputEditRegularHour, setInputEditRegularHour] = useState("");
   const [selectedPerson, setSelectedPerson] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedEditPerson, setSelectedEditPerson] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedEditCategory, setSelectedEditCategory] = useState("");
   const [selectedSpecific, setSelectedSpecific] = useState([]);
   const [selectedEditSpecific, setSelectedEditSpecific] = useState([]);
   const [openMember, setOpenMember] = useState(false);
@@ -137,6 +138,16 @@ export function SettingScreen() {
     );
   };
 
+  const handleChangeEditPerson = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setSelectedEditPerson(
+      // On autofill we get a stringified value.
+      typeof value === 'string' ? value.split(',') : value,
+    );
+  };
+
   const handleChangeCategory = (event) => {
     const {
       target: { value },
@@ -147,11 +158,11 @@ export function SettingScreen() {
     );
   };
 
-  const handleChangeEditPerson = (event) => {
+  const handleChangeEditCategory = (event) => {
     const {
       target: { value },
     } = event;
-    setSelectedEditPerson(
+    setSelectedEditCategory(
       // On autofill we get a stringified value.
       typeof value === 'string' ? value.split(',') : value,
     );
@@ -222,6 +233,7 @@ export function SettingScreen() {
     setEditRegularTaskId(task.id);
     setInputEditTask(task.taskName);
     setSelectedEditPerson(task.pic);
+    setSelectedEditCategory(task.category || "");
     setInputEditRegularHour(task.taskHour);
     setSelectedEditSpecific(task.regular);
     setOpenRegularTask(true);
@@ -311,6 +323,7 @@ export function SettingScreen() {
       id: editRegularTaskId,
       taskName: inputEditTask,
       pic: selectedEditPerson,
+      category: selectedEditCategory,
       regular: selectedEditSpecific,
       taskHour: inputEditRegularHour
     };
@@ -328,6 +341,7 @@ export function SettingScreen() {
       await setDoc(doc(db, "daily", editRegularTaskId), {
         taskName: inputEditTask,
         pic: selectedEditPerson,
+        category: selectedEditCategory,
         regular: selectedEditSpecific,
         taskHour: inputEditRegularHour
       });
@@ -697,6 +711,22 @@ export function SettingScreen() {
                 >
                   {MHListFromDB.map((person, index) => (
                     <MenuItem key={index} value={person.pic} style={getStyles(person.pic, selectedEditPerson, theme)}>{person.pic}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl sx={{ ml: 1, minWidth: 100 }} size="small">
+                <InputLabel id="demo-simple-select-label">種別</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={selectedEditCategory}
+                  label="種別"
+                  onChange={handleChangeEditCategory}
+                  MenuProps={MenuProps}
+                >
+                  {options.map((category, index) => (
+                    <MenuItem key={index} value={category}>{category}</MenuItem>
+                    // <MenuItem key={index} value={category} style={getStyles(category, selectedEditCategory, theme)}>{category}</MenuItem>
                   ))}
                 </Select>
               </FormControl>
