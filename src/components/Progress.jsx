@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import "./Progress.css"
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
-import dummyData from './dummyData'
-import { Card } from './Card'
+// import dummyData from './dummyData'
+// import { Card } from './Card'
 import { DropTask } from './DropTask'
 import { db } from '../firebase'
 import { collection, getDocs } from "firebase/firestore";
-import { v4 as uuidv4 } from "uuid";
-
-
+// import { v4 as uuidv4 } from "uuid";
 
 export const Progress = () => {
   // const [data, setData] = useState(dummyData);
@@ -41,8 +39,7 @@ export const Progress = () => {
     const inpro = tasks.filter(task => {
       return task.status === 0;
     })
-      // inpro.sort((first, second) => first.order - second.order);
-      ;
+    // inpro.sort((first, second) => first.order - second.order);
     setInProTask(inpro);
 
     // status == 1の場合は完了に振り分け
@@ -118,13 +115,13 @@ export const Progress = () => {
 
 
   return (
-    <div style={{ padding: "50px" }}>
-      <h2 style={{ margin: "20px", textAlign: "center" }}>タスク一覧</h2>
+    <div className="all-task">
+      {/* <h2 style={{ margin: "20px", textAlign: "center" }}>タスク一覧</h2> */}
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="trello">
-          <DropTask section="進行中タスク" tasks={inProTask} id="0" schTask={schTask} setSchTask={setSchTask} setTask={setTask} />
-          <DropTask section="完了タスク" tasks={compTask} id="1" schTask={schTask} setSchTask={setSchTask} setTask={setTask} />
-          <DropTask section="今後のタスク" tasks={inCompTask} id="2" schTask={schTask} setSchTask={setSchTask} setTask={setTask} />
+          <DropTask section="進行中タスク" tasks={inProTask} id="0" schTask={schTask} setSchTask={setSchTask} setTask={setTask} taskClass="progress-task" />
+          <DropTask section="完了タスク" tasks={compTask} id="1" schTask={schTask} setSchTask={setSchTask} setTask={setTask} taskClass="complete-task" />
+          <DropTask section="今後のタスク" tasks={inCompTask} id="2" schTask={schTask} setSchTask={setSchTask} setTask={setTask} taskClass="foward-task" />
         </div >
       </DragDropContext >
     </div >

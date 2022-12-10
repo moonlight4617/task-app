@@ -1,0 +1,19 @@
+.task-name {
+  margin: 8px 0px;
+}
+
+.task-date {
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+.task-note {
+  margin-top: 12px;
+  padding: 2px;
+  border: solid 1px #D3D3D3;
+  border-radius: 8px;
+  font-family: sans-serif;
+  min-height: 60px;
+  /* color: #666; */
+  box-shadow: 0 1px 1px 0 rgba(114, 114, 114, 0.5);
+}

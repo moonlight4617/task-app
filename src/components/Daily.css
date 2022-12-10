@@ -3,7 +3,7 @@ body {
 }
 
 input {
-  border: none;
+  /* border: none; */
   padding: 6px 16px;
   outline: none;
 }
