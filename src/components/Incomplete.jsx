@@ -27,39 +27,6 @@ export const Incomplete = (props) => {
   return (
     <>
       <div className="incomplete-area">
-        {/* <p className="title">タスク一覧</p> */}
-        {/* <div className="todoList">
-          <div className="todos"> */}
-        {/* {incompleteList.map((todo, index) => {
-          return (
-            <div className="list-row" key={index}>
-              <div className={`${todo.completeFlag ? "completed" : ""}`}>
-                <div className="todoText">
-                  <span>{todo.taskName}</span>
-                  <span className="pic-area">
-                    {todo.pic.map((person, index) => (
-                      <span key={index} className="pic">{person}</span>
-                    ))}
-                  </span>
-                  <span className="category">種別:{todo.category}</span>
-                  <span className="hm">工数:{todo.taskHour}</span>
-                </div>
-              </div>
-              <div className="icon-area">
-                <button className="icon" onClick={() => onClickComplete(todo.id)}>
-                  <i className="fa-sharp fa-solid fa-check"></i>
-                </button>
-                <button className="icon" onClick={() => onClickDelete(todo.id, index)}>
-                  <i className="fa-solid fa-trash"></i>
-                </button>
-              </div>
-            </div>
-          );
-        })} */}
-        {/* </div>
-        </div> */}
-
-
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead >
@@ -82,8 +49,8 @@ export const Incomplete = (props) => {
                     {todo.taskName}
                   </TableCell>
                   <TableCell align="left">
-                    {todo.pic.map((pic) => (
-                      <span className="pic">{pic}</span>
+                    {todo.pic.map((pic, index) => (
+                      <span className="pic" key={index}>{pic}</span>
                     ))}
                   </TableCell>
                   <TableCell >{todo.category}</TableCell>
@@ -95,6 +62,7 @@ export const Incomplete = (props) => {
                       sx={{
                         "&:hover": {
                           cursor: 'pointer',
+                          color: 'black'
                         }
                       }} />
                   </TableCell>
@@ -105,6 +73,7 @@ export const Incomplete = (props) => {
                       sx={{
                         "&:hover": {
                           cursor: 'pointer',
+                          color: 'black'
                         },
                       }} />
                   </TableCell>

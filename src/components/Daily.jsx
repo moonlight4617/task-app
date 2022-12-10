@@ -4,7 +4,7 @@ import { InputTodo } from "./InputTodo";
 import { Incomplete } from "./Incomplete";
 import { Complete } from "./Complete";
 import { v4 as uuidv4 } from "uuid";
-import { collection, addDoc, getDocs, query, where, updateDoc, deleteDoc, doc } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, where, updateDoc, deleteDoc, doc, orderBy } from "firebase/firestore";
 import { db } from '../firebase';
 import "./Daily.css"
 import { ManHours } from "./ManHours";
@@ -97,7 +97,6 @@ export const Daily = () => {
           await updateDoc(setCompFlag, {
             completeFlag: flag
           });
-          console.log("更新成功");
         }
         update();
       }
@@ -152,11 +151,22 @@ export const Daily = () => {
   useEffect(() => {
     let todayTask = [];
     let MHList = [];
-    // let taskHourEveryPIC = [];
+    let specific = null;
     const taskDate = new Date(dispDate.getFullYear(), dispDate.getMonth(), dispDate.getDate())
     const tomorrowDate = new Date(dispDate.getFullYear(), dispDate.getMonth(), dispDate.getDate() + 1);
     const querySnapshot = query(collection(db, "daily"), where("date", ">=", taskDate), where("date", "<", tomorrowDate));
-    const MHquerySnapshot = query(collection(db, "manHours"));
+    const regularSnapshot = query(collection(db, "daily"), where("regular", "!=", null));
+    const MHquerySnapshot = query(collection(db, "manHours"), orderBy("order"));
+    const dayOfWeekNum = taskDate.getDay();
+    const dayOfWeekStr = ["日曜", "月曜", "火曜", "水曜", "木曜", "金曜", "土曜"][dayOfWeekNum];
+    const endOfMonth = new Date(dispDate.getFullYear(), dispDate.getMonth() + 1, 0)
+    if (dispDate.getDate() === 1) {
+      specific = "月初"
+    } else if (
+      `${dispDate.getMonth()}-${dispDate.getDate()}` === `${endOfMonth.getMonth()}-${endOfMonth.getDate()}`
+    ) {
+      specific = "月末"
+    }
 
     // DBから本日タスク取得
     getDocs(querySnapshot)
@@ -165,12 +175,25 @@ export const Daily = () => {
           const id = { "id": doc.id }
           // const task = Object.assign(id, doc.data());
           const task = { ...id, ...doc.data() };
-          // console.log(task);
           todayTask.push(task);
         })
         setIncompleteList(todayTask)
         // console.log(todayTask);
       });
+
+    // DBから定常タスクを取得
+    getDocs(regularSnapshot)
+      .then((snapShot) => {
+        snapShot.forEach((doc) => {
+          doc.data().regular.forEach((regular) => {
+            if (regular === dayOfWeekStr || regular === "毎日" || regular === specific) {
+              const id = { "id": doc.id }
+              const task = { ...id, ...doc.data() };
+              todayTask.push(task);
+            }
+          })
+        })
+      })
 
     // DBから担当者リスト取得
     getDocs(MHquerySnapshot)

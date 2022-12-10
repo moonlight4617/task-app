@@ -1,5 +1,5 @@
 import React from 'react'
-import { collection, addDoc, getDocs, query, where, updateDoc, deleteDoc, doc, setDoc } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, where, updateDoc, deleteDoc, doc, setDoc, orderBy } from "firebase/firestore";
 import { db } from '../firebase';
 import { useEffect, useState, useRef } from "react";
 import { styled, useTheme } from '@mui/material/styles';
@@ -11,7 +11,6 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
@@ -40,6 +39,7 @@ export function SettingScreen() {
   const [inputRegularHour, setInputRegularHour] = useState("");
   const [inputEditRegularHour, setInputEditRegularHour] = useState("");
   const [selectedPerson, setSelectedPerson] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedEditPerson, setSelectedEditPerson] = useState([]);
   const [selectedSpecific, setSelectedSpecific] = useState([]);
   const [selectedEditSpecific, setSelectedEditSpecific] = useState([]);
@@ -106,6 +106,18 @@ export function SettingScreen() {
     borderRadius: 2,
   };
 
+  const options = [
+    "定常系",
+    "管理",
+    "開発",
+    "改修",
+    "調査",
+    "MT",
+    "リリース",
+    "資料",
+    "調査"
+  ]
+
   function getStyles(name, personName, theme) {
     return {
       fontWeight:
@@ -120,6 +132,16 @@ export function SettingScreen() {
       target: { value },
     } = event;
     setSelectedPerson(
+      // On autofill we get a stringified value.
+      typeof value === 'string' ? value.split(',') : value,
+    );
+  };
+
+  const handleChangeCategory = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setSelectedCategory(
       // On autofill we get a stringified value.
       typeof value === 'string' ? value.split(',') : value,
     );
@@ -232,6 +254,7 @@ export function SettingScreen() {
 
   const onClickAddRegularTask = async () => {
     if (inputRegularTask === "") return;
+    if (selectedSpecific.length === 0) return;
     try {
       const docRef = await addDoc(collection(db, "daily"), {
         taskName: inputRegularTask,
@@ -283,6 +306,7 @@ export function SettingScreen() {
 
   const onClickUpdateRegularTask = async () => {
     if (inputEditTask === "") return;
+    if (selectedEditSpecific.length === 0) return;
     const editTask = {
       id: editRegularTaskId,
       taskName: inputEditTask,
@@ -335,9 +359,9 @@ export function SettingScreen() {
     let MHList = [];
     let regular = [];
     let specific = [];
-    const MHquerySnapshot = query(collection(db, "manHours"));
+    const MHquerySnapshot = query(collection(db, "manHours"), orderBy("order"));
     const querySnapshot = query(collection(db, "daily"), where("regular", "!=", null));
-    const specificSnapshot = query(collection(db, "specific"));
+    const specificSnapshot = query(collection(db, "specific"), orderBy("order"));
 
     // DBから定常タスク取得
     getDocs(querySnapshot)
@@ -361,7 +385,6 @@ export function SettingScreen() {
           const menberList = { ...id, ...doc.data() };
           MHList.push(menberList);
         })
-        // console.log(MHList);
         setMHListFromDB(MHList);
       });
 
@@ -381,7 +404,7 @@ export function SettingScreen() {
   return (
     <>
       <div style={{ marginTop: '40px' }}>
-        <TableContainer component={Paper} sx={{ mb: 10, maxWidth: '70%', mx: 'auto' }}>
+        <TableContainer component={Paper} sx={{ mb: 10, maxWidth: '80%', mx: 'auto' }}>
           <Table sx={{ minWidth: 100 }} aria-label="customized table">
             <TableHead>
               <TableRow>
@@ -440,9 +463,6 @@ export function SettingScreen() {
               value={inputHour}
               onChange={onChangeHour}
               sx={{ ml: 1 }}
-            // InputLabelProps={{
-            //   shrink: true,
-            // }}
             />
           </Box>
           <Stack>
@@ -491,12 +511,13 @@ export function SettingScreen() {
           </Box>
         </Modal>
 
-        <TableContainer component={Paper} sx={{ mb: 8, maxWidth: '70%', mx: 'auto' }}>
+        <TableContainer component={Paper} sx={{ mb: 8, maxWidth: '80%', mx: 'auto' }}>
           <Table sx={{ minWidth: 100 }} aria-label="customized table">
             <TableHead>
               <TableRow>
                 <StyledTableCell>定常タスク</StyledTableCell>
                 <StyledTableCell>担当者</StyledTableCell>
+                <StyledTableCell>種別</StyledTableCell>
                 <StyledTableCell>工数(h)</StyledTableCell>
                 <StyledTableCell>指定日</StyledTableCell>
                 <StyledTableCell></StyledTableCell>
@@ -517,7 +538,12 @@ export function SettingScreen() {
                   >
                     {task.taskName}
                   </StyledTableCell>
-                  <StyledTableCell>{task.pic}</StyledTableCell>
+                  <StyledTableCell align="left">
+                    {task.pic.map((pic, index) => (
+                      <span className="pic" key={index}>{pic}</span>
+                    ))}
+                  </StyledTableCell>
+                  <StyledTableCell>{task.category}</StyledTableCell>
                   <StyledTableCell>{task.taskHour}</StyledTableCell>
                   <StyledTableCell>{task.regular}</StyledTableCell>
                   <StyledTableCell>
@@ -525,6 +551,7 @@ export function SettingScreen() {
                       onClick={() => onClickDeleteRegularTask(task.id, index)}
                       color="action"
                       sx={{
+                        width: '20px',
                         "&:hover": {
                           cursor: 'pointer',
                           color: 'black'
@@ -547,6 +574,7 @@ export function SettingScreen() {
               size="small"
               value={inputRegularTask}
               onChange={onChangeTaskName}
+            // sx={{ minWidth: 200 }}
             />
             <FormControl sx={{ ml: 1, minWidth: 100 }} size="small">
               <InputLabel id="demo-simple-select-label">担当者</InputLabel>
@@ -571,6 +599,21 @@ export function SettingScreen() {
                 ))}
               </Select>
             </FormControl>
+            <FormControl sx={{ ml: 1, minWidth: 100 }} size="small">
+              <InputLabel id="demo-simple-select-label">種別</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={selectedCategory}
+                label="種別"
+                onChange={handleChangeCategory}
+                MenuProps={MenuProps}
+              >
+                {options.map((category, index) => (
+                  <MenuItem key={index} value={category} style={getStyles(category, selectedCategory, theme)}>{category}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
             <TextField
               id="outlined-basic"
               label="工数"
@@ -579,7 +622,7 @@ export function SettingScreen() {
               InputProps={{ inputProps: { min: 0 } }}
               value={inputRegularHour}
               onChange={onChangeRegularHour}
-              sx={{ ml: 1 }}
+              sx={{ ml: 1, maxWidth: 80 }}
             />
             <FormControl sx={{ ml: 1, minWidth: 100 }} size="small">
               <InputLabel id="demo-simple-select-label">指定日</InputLabel>
