@@ -726,7 +726,6 @@ export function SettingScreen() {
                 >
                   {options.map((category, index) => (
                     <MenuItem key={index} value={category}>{category}</MenuItem>
-                    // <MenuItem key={index} value={category} style={getStyles(category, selectedEditCategory, theme)}>{category}</MenuItem>
                   ))}
                 </Select>
               </FormControl>
