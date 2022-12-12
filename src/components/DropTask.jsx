@@ -9,7 +9,7 @@ import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { collection, addDoc, getDocs, query, where, updateDoc, deleteDoc, doc } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, where, updateDoc, deleteDoc, doc, orderBy } from "firebase/firestore";
 import { db } from '../firebase';
 // import Select from 'react-select'
 import { SimpleDatePicker } from "./DatePicker";
@@ -143,7 +143,7 @@ export const DropTask = (props) => {
 
   useEffect(() => {
     let MHList = [];
-    const MHquerySnapshot = query(collection(db, "manHours"));
+    const MHquerySnapshot = query(collection(db, "manHours"), orderBy("order"));
 
     // DBから担当者リスト取得
     getDocs(MHquerySnapshot)
