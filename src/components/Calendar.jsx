@@ -9,14 +9,14 @@ import { db } from '../firebase'
 import { collection, getDocs } from "firebase/firestore";
 import { useState } from 'react';
 import { format } from 'date-fns'
-import { EditModal } from './EditModal.jsx'
-import { Tooltip } from "bootstrap";
+// import { EditModal } from './EditModal.jsx'
+// import { Tooltip } from "bootstrap";
 
 export const Calendar = () => {
   const [tasks, setTasks] = useState([]);
-  const [editTask, setEditTask] = useState("");
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [schTask, setSchTask] = useState([]);
+  // const [editTask, setEditTask] = useState("");
+  // const [showEditModal, setShowEditModal] = useState(false);
+  // const [schTask, setSchTask] = useState([]);
 
   let calendarTask = [];
 
@@ -27,12 +27,12 @@ export const Calendar = () => {
     // setShowEditModal(true);
   }
 
-  const onClickCloseEditModal = () => {
-    setShowEditModal(false);
-  }
-  const setTask = (tasks) => {
-    setSchTask(tasks);
-  }
+  // const onClickCloseEditModal = () => {
+  //   setShowEditModal(false);
+  // }
+  // const setTask = (tasks) => {
+  //   setSchTask(tasks);
+  // }
 
   useEffect(() => {
     const taskData = collection(db, "schedule");
@@ -71,12 +71,10 @@ export const Calendar = () => {
       })
   });
 
-  const showEvents = (e) => {
-    console.log(e);
-    console.log(e.event.title);
-  }
-
-  // console.log(tasks);
+  // const showEvents = (e) => {
+  //   console.log(e);
+  //   console.log(e.event.title);
+  // }
 
   return (
     <>
@@ -93,29 +91,7 @@ export const Calendar = () => {
             right: 'dayGridMonth,timeGridWeek',
           }}
           eventClick={onClickEditTask}
-        // eventMouseEnter={(e) => { console.log(e.event.title) }}
-        // eventMouseEnter={(info) => {
-        //   var tooltip = new Tooltip(info.el, {
-        //     title: info.event.title,
-        //     placement: 'top',
-        //     trigger: 'hover',
-        //     container: 'body'
-        //   });
-        // }}
-
-        // eventMouseEnter={info => {
-        //   const event = (
-        //     <>
-        //       <span>{info.event.title}</span>
-        //       <Popup target={info.el} text={info.event.title} />
-        //     </>
-        //   );
-        //   ReactDOM.render(event, info.el);
-        // }}
         />
-        {/* <div>
-          <EditModal id={editTask.id} task={editTask} showEditModal={showEditModal} onClickCloseEditModal={onClickCloseEditModal} schTask={schTask} setTask={setTask} />
-        </div> */}
       </div>
     </>
   )
