@@ -67,15 +67,17 @@ export const Incomplete = (props) => {
                       }} />
                   </TableCell>
                   <TableCell sx={{ maxWidth: 10 }}>
-                    <DeleteIcon
-                      color="action"
-                      onClick={() => onClickDelete(todo.id, index)}
-                      sx={{
-                        "&:hover": {
-                          cursor: 'pointer',
-                          color: 'black'
-                        },
-                      }} />
+                    {!todo.regular &&
+                      <DeleteIcon
+                        color="action"
+                        onClick={() => onClickDelete(todo.id, index)}
+                        sx={{
+                          "&:hover": {
+                            cursor: 'pointer',
+                            color: 'black'
+                          },
+                        }} />
+                    }
                   </TableCell>
                 </TableRow>
               ))}

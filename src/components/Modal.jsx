@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
 import './Modal.css'
 import Select from 'react-select'
-import { v4 as uuidv4 } from "uuid";
-import { collection, addDoc, getDocs, query, where, updateDoc, deleteDoc, doc } from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore";
 import { db } from '../firebase';
 import { SimpleDatePicker } from "./DatePicker";
 
@@ -37,16 +36,10 @@ export const Modal = (props) => {
 
   const onClickAdd = async () => {
     if (inputText === "") return;
-    // const newIncompleteList = [...incompleteList, newTask];
     const personValue = document.getElementById("pic")
-    // setIncompleteList(newIncompleteList);
-    // setPicFlag(false);
-    // console.log(value.$d || value);
-    // console.log(endValue.$d || endValue);
 
     try {
       const docRef = await addDoc(collection(db, "schedule"), {
-        // id: uuidv4(),
         task: inputText,
         pic: selectedPerson,
         startDate: value.$d || value,

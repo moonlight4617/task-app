@@ -2,15 +2,13 @@
 import React, { useState, useEffect } from "react";
 import { InputTodo } from "./InputTodo";
 import { Incomplete } from "./Incomplete";
-import { Complete } from "./Complete";
-import { v4 as uuidv4 } from "uuid";
+// import { Complete } from "./Complete";
 import { collection, addDoc, getDocs, query, where, updateDoc, deleteDoc, doc, orderBy } from "firebase/firestore";
 import { db } from '../firebase';
 import "./Daily.css"
 import { ManHours } from "./ManHours";
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
-import Box from '@mui/material/Box';
 
 
 export const Daily = () => {
@@ -53,7 +51,6 @@ export const Daily = () => {
     const submitDate = new Date(dispDate.getFullYear(), dispDate.getMonth(), dispDate.getDate(), newDate.getHours(), newDate.getMinutes(), newDate.getSeconds());
     try {
       const docRef = await addDoc(collection(db, "daily"), {
-        // id: uuidv4(),
         taskName: inputText,
         pic: selectedPerson,
         category: selectedCategory,
@@ -64,7 +61,6 @@ export const Daily = () => {
 
       const newTask = { id: docRef.id, taskName: inputText, pic: selectedPerson, category: selectedCategory, taskHour: inputHour, completeFlag: false }
       const newIncompleteList = [...incompleteList, newTask];
-      // const personValue = document.getElementById("pic")
       setIncompleteList(newIncompleteList);
       setInputText("");
       setInputHour("");

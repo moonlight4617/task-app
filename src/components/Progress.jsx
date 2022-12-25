@@ -1,15 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import "./Progress.css"
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
-// import dummyData from './dummyData'
-// import { Card } from './Card'
 import { DropTask } from './DropTask'
 import { db } from '../firebase'
 import { collection, getDocs } from "firebase/firestore";
-// import { v4 as uuidv4 } from "uuid";
 
 export const Progress = () => {
-  // const [data, setData] = useState(dummyData);
   const [schTask, setSchTask] = useState([]);
   const [inProTask, setInProTask] = useState([]);
   const [compTask, setCompTask] = useState([]);
@@ -73,13 +69,10 @@ export const Progress = () => {
       } else if (source.droppableId === "2") {
         sourceTask = inCompTask;
       }
-      // console.log(sourceTask);
       // タスクを削除
       const [removed] = sourceTask.splice(source.index, 1);
       // タスクを追加
       sourceTask.splice(destination.index, 0, removed);
-      // いる？
-      // setInProTask(sourceTask);
 
     } else {
       // 違うカラムへの移動
@@ -116,7 +109,6 @@ export const Progress = () => {
 
   return (
     <div className="all-task">
-      {/* <h2 style={{ margin: "20px", textAlign: "center" }}>タスク一覧</h2> */}
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="trello">
           <DropTask section="進行中タスク" tasks={inProTask} id="0" schTask={schTask} setSchTask={setSchTask} setTask={setTask} taskClass="progress-task" />

@@ -48,8 +48,6 @@ const style = {
 
 export const DropTask = (props) => {
   const { section, tasks, id, schTask, setSchTask, setTask, taskClass } = props;
-  // const [show, setShow] = useState(false);
-  // const [showEditModal, setShowEditModal] = useState(false);
   const [editTask, setEditTask] = useState("");
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -103,9 +101,6 @@ export const DropTask = (props) => {
 
   const onClickAdd = async () => {
     if (inputText === "") return;
-    // const newIncompleteList = [...incompleteList, newTask];
-    // const personValue = document.getElementById("pic")
-    // setIncompleteList(newIncompleteList);
 
     try {
       const docRef = await addDoc(collection(db, "schedule"), {

@@ -1,25 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import './Modal.css'
 import Select from 'react-select'
-import { v4 as uuidv4 } from "uuid";
-import { collection, addDoc, getDocs, query, where, updateDoc, deleteDoc, doc, setDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { db } from '../firebase';
-import { SimpleDatePicker } from "./DatePicker";
-import { format } from 'date-fns'
 
 
 export const EditRegularModal = (props) => {
   const { showEditModal, onClickCloseEditModal, task, persons } = props;
   const [inputText, setInputText] = useState(task.taskName);
-  // const [note, setNote] = useState(task.note);
   const [selectedPerson, setSelectedPerson] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState();
   const initialDate = new Date()
-  const [value, setValue] = useState("");
-  const [endValue, setEndValue] = useState("");
   const [inputRegularHour, setInputRegularHour] = useState("");
-
-
 
   let personIndex = [];
   if (Array.isArray(task.pic)) {
@@ -47,24 +39,9 @@ export const EditRegularModal = (props) => {
     setInputRegularHour(e.target.value);
   };
 
-
   // 更新に変更
   const onClickUpdate = async () => {
     if (inputText === "") return;
-    const editTask = {
-      id: task.id,
-      task: inputText,
-      pic: selectedPerson,
-      regular: selectedStatus,
-      taskHour: inputRegularHour
-    };
-    // const newTaskList = schTask.map((t) => {
-    //   if (t.id === task.id) {
-    //     t = editTask;
-    //   }
-    //   return t;
-    // })
-    // setTask(newTaskList);
     setInputText("");
 
     try {

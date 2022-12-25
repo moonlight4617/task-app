@@ -20,9 +20,6 @@ import InputLabel from '@mui/material/InputLabel';
 
 export const Card = (props) => {
   const { task, tasks, onClickEditTask, schTask, setTask, MHListFromDB } = props;
-  // const [show, setShow] = useState(false);
-  // const [showEditModal, setShowEditModal] = useState(false);
-  // const [editTask, setEditTask] = useState("");
   const [open, setOpen] = useState(false);
   const [inputText, setInputText] = useState("");
   const [note, setNote] = useState("");
@@ -184,9 +181,6 @@ export const Card = (props) => {
               },
             }} />
         </div>
-        {/* <button className="icon" onClick={(e) => e.stopPropagation()}>
-          <i className="fa-solid fa-trash" onClick={onClickDelete}></i>
-        </button> */}
       </div>
 
 
