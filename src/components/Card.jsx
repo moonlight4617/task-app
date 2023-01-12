@@ -8,18 +8,17 @@ import EditIcon from '@mui/icons-material/Edit';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-// import Select from 'react-select'
 import { SimpleDatePicker } from "./DatePicker";
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Chip from '@mui/material/Chip';
-import { styled, useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 
 
 export const Card = (props) => {
-  const { task, tasks, onClickEditTask, schTask, setTask, MHListFromDB } = props;
+  const { task, schTask, setTask, MHListFromDB } = props;
   const [open, setOpen] = useState(false);
   const [inputText, setInputText] = useState("");
   const [note, setNote] = useState("");
@@ -149,17 +148,16 @@ export const Card = (props) => {
 
   return (
     <>
-      {/* <div className="card" onClick={onClickEditTask} id={task.id}> */}
-      <div className="card">
+      <Box className="card">
         <h3 id={task.id} className="task-name">{task.task}</h3>
-        <div id={task.id} className="task-date">{formattedStartDate} 〜 {formattedCompDate}</div>
-        <div id={task.id}>
+        <Box id={task.id} className="task-date">{formattedStartDate} 〜 {formattedCompDate}</Box>
+        <Box id={task.id}>
           {task.pic.map((pic, index) => (
             <span className="pic" key={index}>{pic}</span>
           ))}
-        </div>
-        <div id={task.id} className="task-note">{task.note}</div>
-        <div style={{ textAlign: 'right', marginTop: '4px' }}>
+        </Box>
+        <Box id={task.id} className="task-note">{task.note}</Box>
+        <Box style={{ textAlign: 'right', marginTop: '4px' }}>
           <EditIcon
             id={task.id}
             color="action"
@@ -180,8 +178,8 @@ export const Card = (props) => {
                 color: 'black'
               },
             }} />
-        </div>
-      </div>
+        </Box>
+      </Box>
 
 
       <Modal
@@ -192,14 +190,16 @@ export const Card = (props) => {
       >
         <Box sx={style}>
           <h4 style={{ textAlign: 'center' }}>タスク編集</h4>
-          <div className="input-area">
-            <input
-              placeholder="タスクを入力"
-              value={inputText}
-              onChange={onChangeText}
-              className="task-text"
-            />
-            <FormControl sx={{ mb: 1, minWidth: 100 }} size="small">
+          <Box className="input-area">
+            <Box sx={{ mb: 2 }}>
+              <input
+                placeholder="タスクを入力"
+                value={inputText}
+                onChange={onChangeText}
+                className="task-text"
+              />
+            </Box>
+            <FormControl sx={{ mb: 2, minWidth: 100 }} size="small">
               <InputLabel id="demo-simple-select-label">担当者</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
@@ -230,13 +230,15 @@ export const Card = (props) => {
               onChange={onChangeNote}
               className="modal-note"
             />
-            <div className="button-area">
+            <Box sx={{
+              mt: 2, display: 'flex', justifyContent: 'center'
+            }}>
               <Button variant="contained" onClick={onClickUpdate}>更新</Button>
-            </div>
-          </div>
-          <div style={{ textAlign: 'right', marginRight: '8px' }}>
+            </Box>
+          </Box>
+          <Box style={{ textAlign: 'right', marginRight: '8px' }}>
             <Button variant="outlined" onClick={handleClose}>close</Button>
-          </div>
+          </Box>
         </Box>
       </Modal>
     </>

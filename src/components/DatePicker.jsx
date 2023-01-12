@@ -9,14 +9,6 @@ import "./DatePicker.css"
 
 export const SimpleDatePicker = (props) => {
   const { value, endValue, setValue, setEndValue } = props;
-  // const initialDate = new Date()
-  // const [value, setValue] = React.useState(initialDate);
-  // const [endValue, setEndValue] = React.useState(initialDate);
-  // const [startDate, setStartDate] = useState(initialDate)
-  // const [endDate, setEndDate] = useState(initialDate)
-  // const handleChange = (date) => {
-  //   setStartDate(date)
-  // }
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
