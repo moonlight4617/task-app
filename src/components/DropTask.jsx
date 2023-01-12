@@ -3,15 +3,12 @@ import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Card } from './Card'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
-// import { Modal } from './Modal.jsx'
-// import { EditModal } from './EditModal.jsx'
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { collection, addDoc, getDocs, query, where, updateDoc, deleteDoc, doc, orderBy } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, orderBy } from "firebase/firestore";
 import { db } from '../firebase';
-// import Select from 'react-select'
 import { SimpleDatePicker } from "./DatePicker";
 import Select from '@mui/material/Select';
 import { useTheme } from '@mui/material/styles';
@@ -20,6 +17,7 @@ import Chip from '@mui/material/Chip';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import AddIcon from '@mui/icons-material/Add';
+import './Card.css'
 
 
 // セレクトボックス用スタイル
@@ -66,11 +64,11 @@ export const DropTask = (props) => {
     setEditTask(edit);
   }
 
-  const persons = [
-    { value: '田邊', label: '田邊' },
-    { value: '近本', label: '近本' },
-    { value: '福島', label: '福島' }
-  ]
+  // const persons = [
+  //   { value: '田邊', label: '田邊' },
+  //   { value: '近本', label: '近本' },
+  //   { value: '福島', label: '福島' }
+  // ]
 
   const onChangeText = (e) => {
     setInputText(e.target.value);
@@ -159,15 +157,15 @@ export const DropTask = (props) => {
     <>
       < Droppable key={uuidv4()} droppableId={id} >
         {(provided) => (
-          <div className={taskClass}
+          <Box className={taskClass}
             ref={provided.innerRef}
             {...provided.droppableProps}>
-            <div className='trello-section-title'>{section}</div>
-            <div className="trello-section-centent">
+            <Box className='trello-section-title'>{section}</Box>
+            <Box className="trello-section-centent">
               {tasks.map((task, index) => (
                 <Draggable draggableId={task.id} index={index} key={task.id}>
                   {(provided, snapshot) => (
-                    <div
+                    <Box
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
@@ -177,16 +175,16 @@ export const DropTask = (props) => {
                       }}
                     >
                       <Card key={task.id} tasks={tasks} task={task} onClickEditTask={onClickEditTask} schTask={schTask} setTask={setTask} MHListFromDB={MHListFromDB} />
-                    </div>
+                    </Box>
                   )}
                 </Draggable>
               ))}
               {provided.placeholder}
-            </div>
-            <div className="add-task" onClick={handleOpen}>
+            </Box>
+            <Box className="add-task" onClick={handleOpen}>
               <AddIcon />
-            </div>
-          </div>
+            </Box>
+          </Box>
         )}
       </Droppable>
       <Modal
@@ -197,14 +195,16 @@ export const DropTask = (props) => {
       >
         <Box sx={style}>
           <h4 style={{ textAlign: 'center' }}>新規タスク</h4>
-          <div className="input-area">
-            <input
-              placeholder="タスクを入力"
-              value={inputText}
-              onChange={onChangeText}
-              className="task-text"
-            />
-            <div className="select-area">
+          <Box className="input-area">
+            <Box sx={{ mb: 1 }}>
+              <input
+                placeholder="タスクを入力"
+                value={inputText}
+                onChange={onChangeText}
+                className="task-text"
+              />
+            </Box>
+            <Box className="select-area">
               <FormControl sx={{ mb: 1, minWidth: 100 }} size="small">
                 <InputLabel id="demo-simple-select-label">担当者</InputLabel>
                 <Select
@@ -228,7 +228,7 @@ export const DropTask = (props) => {
                   ))}
                 </Select>
               </FormControl>
-            </div>
+            </Box>
             <SimpleDatePicker value={value} endValue={endValue} setValue={setValue} setEndValue={setEndValue} />
             <textarea
               placeholder="備考"
@@ -236,13 +236,13 @@ export const DropTask = (props) => {
               onChange={onChangeNote}
               className="modal-note"
             />
-            <div className="button-area">
+            <Box className="button-area">
               <Button variant="contained" onClick={onClickAdd}>作成</Button>
-            </div>
-          </div>
-          <div style={{ textAlign: 'right', marginRight: '8px' }}>
+            </Box>
+          </Box>
+          <Box style={{ textAlign: 'right', marginRight: '8px' }}>
             <Button variant="outlined" onClick={handleClose}>close</Button>
-          </div>
+          </Box>
         </Box>
       </Modal>
     </>
