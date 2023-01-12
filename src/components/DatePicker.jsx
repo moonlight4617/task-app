@@ -24,7 +24,7 @@ export const SimpleDatePicker = (props) => {
         label="開始予定日"
         value={value}
         onChange={(newValue) => {
-          setValue(newValue);
+          setValue(newValue.toDate());
         }}
         renderInput={(params) => <TextField {...params} />}
         className="startDate"
@@ -33,7 +33,7 @@ export const SimpleDatePicker = (props) => {
         label="完了予定日"
         value={endValue}
         onChange={(newValue) => {
-          setEndValue(newValue);
+          setEndValue(newValue.toDate());
         }}
         renderInput={(params) => <TextField {...params} />}
       />
