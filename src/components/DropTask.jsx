@@ -1,15 +1,13 @@
 import React from 'react'
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { Card } from './Card'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
-import Modal from '@mui/material/Modal';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import { collection, addDoc, getDocs, query, orderBy } from "firebase/firestore";
 import { db } from '../firebase';
 import { SimpleDatePicker } from "./DatePicker";
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Select from '@mui/material/Select';
 import { useTheme } from '@mui/material/styles';
 import MenuItem from '@mui/material/MenuItem';
@@ -18,6 +16,8 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import AddIcon from '@mui/icons-material/Add';
 import TextField from '@mui/material/TextField';
+
+import { Card } from './Card'
 import './Card.css'
 
 

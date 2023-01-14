@@ -1,7 +1,7 @@
 import React from 'react'
-import { collection, addDoc, getDocs, query, where, updateDoc, deleteDoc, doc, setDoc, orderBy } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, where, updateDoc, deleteDoc, doc, setDoc, orderBy, limit } from "firebase/firestore";
 import { db } from '../firebase';
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { styled, useTheme } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -46,6 +46,8 @@ export function SettingScreen() {
   const [selectedEditSpecific, setSelectedEditSpecific] = useState([]);
   const [openMember, setOpenMember] = useState(false);
   const [openRegularTask, setOpenRegularTask] = useState(false);
+  const [order, setOrder] = useState("");
+  const [lastOrder, setLastOrder] = useState("");
   const theme = useTheme();
 
   // テーブルスタイル
@@ -224,6 +226,7 @@ export function SettingScreen() {
     setInputEditMember(member.pic);
     setInputEditMHour(member.operatingTime);
     setEditMemberId(member.id);
+    setOrder(member.order);
     setOpenMember(true);
   };
 
@@ -246,10 +249,9 @@ export function SettingScreen() {
     try {
       const docRef = await addDoc(collection(db, "manHours"), {
         pic: inputMember,
-        operatingTime: inputHour
-        // ...newPic
+        operatingTime: inputHour,
+        order: lastOrder + 1
       });
-      // console.log(newPic);
       const newPic = {
         id: docRef.id,
         pic: inputMember,
@@ -258,6 +260,7 @@ export function SettingScreen() {
       setMHListFromDB([...MHListFromDB, newPic])
       setInputMember("");
       setInputHour("");
+      setLastOrder(lastOrder + 1);
       console.log("Document written with ID: ", docRef.id);
     } catch (e) {
       console.error("Error adding document: ", e);
@@ -292,7 +295,8 @@ export function SettingScreen() {
     const editMember = {
       id: editMemberId,
       pic: inputEditMember,
-      operatingTime: inputEditMHour
+      operatingTime: inputEditMHour,
+      order: order
     };
     const newMHList = MHListFromDB.map((list) => {
       if (list.id !== editMemberId) {
@@ -306,7 +310,8 @@ export function SettingScreen() {
     try {
       await setDoc(doc(db, "manHours", editMemberId), {
         pic: inputEditMember,
-        operatingTime: inputEditMHour
+        operatingTime: inputEditMHour,
+        order: order
       });
       console.log("Document written with ID: ", editMemberId);
     } catch (e) {
@@ -353,27 +358,34 @@ export function SettingScreen() {
     }
   };
 
-
   const onClickDeleteMember = async (id, index) => {
-    const NewMHList = [...MHListFromDB];
-    NewMHList.splice(index, 1);
-    await deleteDoc(doc(db, "manHours", id));
-    setMHListFromDB(NewMHList);
+    const result = window.confirm("メンバーを削除しますか？");
+    if (result) {
+      const NewMHList = [...MHListFromDB];
+      NewMHList.splice(index, 1);
+      await deleteDoc(doc(db, "manHours", id));
+      setMHListFromDB(NewMHList);
+    }
   };
 
   const onClickDeleteRegularTask = async (id, index) => {
-    const newRegularTask = [...regularTask];
-    newRegularTask.splice(index, 1);
-    await deleteDoc(doc(db, "daily", id));
-    setRegularTask(newRegularTask);
-    // setTaskHour(MHListFromDB, newIncompleteList)
+    const result = window.confirm("定常タスクを削除しますか？");
+    if (result) {
+      const newRegularTask = [...regularTask];
+      newRegularTask.splice(index, 1);
+      await deleteDoc(doc(db, "daily", id));
+      setRegularTask(newRegularTask);
+      // setTaskHour(MHListFromDB, newIncompleteList)
+    }
   };
 
   useEffect(() => {
     let MHList = [];
     let regular = [];
     let specific = [];
+    let lastNum = null;
     const MHquerySnapshot = query(collection(db, "manHours"), orderBy("order"));
+    const lastOrderNumSnapshot = query(collection(db, "manHours"), orderBy("order", "desc"), limit(1));
     const querySnapshot = query(collection(db, "daily"), where("regular", "!=", null));
     const specificSnapshot = query(collection(db, "specific"), orderBy("order"));
 
@@ -401,6 +413,17 @@ export function SettingScreen() {
         })
         setMHListFromDB(MHList);
       });
+
+    // DBから担当者リストの最終ナンバー取得
+    getDocs(lastOrderNumSnapshot)
+      .then((snapShot) => {
+        snapShot.forEach((doc) => {
+          lastNum = doc.data().order;
+        })
+        setLastOrder(lastNum || 0);
+        // console.log(lastNum);
+      });
+
 
     // DBから指定日リスト取得
     getDocs(specificSnapshot)
