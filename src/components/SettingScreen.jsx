@@ -1,7 +1,7 @@
 import React from 'react'
-import { collection, addDoc, getDocs, query, where, updateDoc, deleteDoc, doc, setDoc, orderBy, limit } from "firebase/firestore";
-import { db } from '../firebase';
 import { useEffect, useState } from "react";
+import { collection, addDoc, getDocs, query, where, deleteDoc, doc, setDoc, orderBy, limit } from "firebase/firestore";
+import { db } from '../firebase';
 import { styled, useTheme } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -22,6 +22,8 @@ import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import DeleteIcon from '@mui/icons-material/Delete';
+
+import "./SettingScreen.css"
 
 
 export function SettingScreen() {
@@ -53,7 +55,7 @@ export function SettingScreen() {
   // テーブルスタイル
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
-      backgroundColor: theme.palette.common.black,
+      backgroundColor: theme.palette.primary.main,
       color: theme.palette.common.white,
     },
     [`&.${tableCellClasses.body}`]: {
@@ -441,6 +443,7 @@ export function SettingScreen() {
   return (
     <>
       <div style={{ marginTop: '40px' }}>
+        <h4 className="section-title">メンバー設定</h4>
         <TableContainer component={Paper} sx={{ mb: 10, maxWidth: '80%', mx: 'auto' }}>
           <Table sx={{ minWidth: 100 }} aria-label="customized table">
             <TableHead>
@@ -548,6 +551,7 @@ export function SettingScreen() {
           </Box>
         </Modal>
 
+        <h4 className="section-title">定常タスク設定</h4>
         <TableContainer component={Paper} sx={{ mb: 8, maxWidth: '80%', mx: 'auto' }}>
           <Table sx={{ minWidth: 100 }} aria-label="customized table">
             <TableHead>
