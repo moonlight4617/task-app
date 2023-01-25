@@ -36,7 +36,7 @@ export function ManHours(props) {
           <TableHead>
             <TableRow>
               <StyledTableCell>メンバー</StyledTableCell>
-              <StyledTableCell align="left">必要残工数</StyledTableCell>
+              <StyledTableCell align="left">必要残工数(h)</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>

@@ -1,15 +1,13 @@
 import React from 'react'
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { Card } from './Card'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
-import Modal from '@mui/material/Modal';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import { collection, addDoc, getDocs, query, orderBy } from "firebase/firestore";
 import { db } from '../firebase';
 import { SimpleDatePicker } from "./DatePicker";
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Select from '@mui/material/Select';
 import { useTheme } from '@mui/material/styles';
 import MenuItem from '@mui/material/MenuItem';
@@ -17,6 +15,9 @@ import Chip from '@mui/material/Chip';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import AddIcon from '@mui/icons-material/Add';
+import TextField from '@mui/material/TextField';
+
+import { Card } from './Card'
 import './Card.css'
 
 
@@ -46,7 +47,7 @@ const style = {
 
 export const DropTask = (props) => {
   const { section, tasks, id, schTask, setSchTask, setTask, taskClass } = props;
-  const [editTask, setEditTask] = useState("");
+  // const [editTask, setEditTask] = useState("");
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -57,18 +58,13 @@ export const DropTask = (props) => {
   const [value, setValue] = useState(initialDate);
   const [endValue, setEndValue] = useState(initialDate);
   const [MHListFromDB, setMHListFromDB] = useState([]);
+  const [status, setStatus] = useState("");
   const theme = useTheme();
 
-  const onClickEditTask = (e) => {
-    const edit = tasks.find(task => task.id == e.target.id);
-    setEditTask(edit);
-  }
-
-  // const persons = [
-  //   { value: '田邊', label: '田邊' },
-  //   { value: '近本', label: '近本' },
-  //   { value: '福島', label: '福島' }
-  // ]
+  // const onClickEditTask = (e) => {
+  //   const edit = tasks.find(task => task.id == e.target.id);
+  //   setEditTask(edit);
+  // }
 
   const onChangeText = (e) => {
     setInputText(e.target.value);
@@ -88,6 +84,10 @@ export const DropTask = (props) => {
     );
   };
 
+  const handleChangeStatus = (e) => {
+    setStatus(e.target.value);
+  }
+
   function getStyles(name, personName, theme) {
     return {
       fontWeight:
@@ -106,7 +106,7 @@ export const DropTask = (props) => {
         pic: selectedPerson,
         startDate: value.$d || value,
         compDate: endValue.$d || endValue,
-        status: Number(id),
+        status: status,
         note: note
       });
       console.log("Document written with ID: ", docRef.id);
@@ -116,7 +116,7 @@ export const DropTask = (props) => {
         pic: selectedPerson,
         startDate: value.$d || value,
         compDate: endValue.$d || endValue,
-        status: Number(id),
+        status: status,
         note: note
       }
       const newTaskList = [...schTask, newTask];
@@ -131,6 +131,7 @@ export const DropTask = (props) => {
       setValue(initialDate);
       setEndValue(initialDate);
       setNote("");
+      setStatus("");
     }
   };
 
@@ -174,7 +175,7 @@ export const DropTask = (props) => {
                         opacity: snapshot.isDragging ? "0.5" : "1",
                       }}
                     >
-                      <Card key={task.id} tasks={tasks} task={task} onClickEditTask={onClickEditTask} schTask={schTask} setTask={setTask} MHListFromDB={MHListFromDB} />
+                      <Card key={task.id} tasks={tasks} task={task} schTask={schTask} setTask={setTask} MHListFromDB={MHListFromDB} />
                     </Box>
                   )}
                 </Draggable>
@@ -187,6 +188,7 @@ export const DropTask = (props) => {
           </Box>
         )}
       </Droppable>
+
       <Modal
         open={open}
         onClose={handleClose}
@@ -197,45 +199,77 @@ export const DropTask = (props) => {
           <h4 style={{ textAlign: 'center' }}>新規タスク</h4>
           <Box className="input-area">
             <Box sx={{ mb: 1 }}>
-              <input
-                placeholder="タスクを入力"
+              <TextField
+                variant="outlined"
                 value={inputText}
                 onChange={onChangeText}
                 className="task-text"
+                id="outlined-basic"
+                label="タスク名入力"
+                fullWidth
               />
             </Box>
-            <Box className="select-area">
-              <FormControl sx={{ mb: 1, minWidth: 100 }} size="small">
-                <InputLabel id="demo-simple-select-label">担当者</InputLabel>
+            <FormControl sx={{ mb: 1, minWidth: 100 }} size="small">
+              <InputLabel id="demo-simple-select-label">担当者</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={selectedPerson}
+                label="担当者"
+                multiple
+                onChange={handleChangePerson}
+                MenuProps={MenuProps}
+                sx={{
+                  minHeight: 50, display: 'flex',
+                  alignItems: 'center',
+                }}
+                renderValue={(selected) => (
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                    {selected.map((value) => (
+                      <Chip key={value} label={value} />
+                    ))}
+                  </Box>
+                )}
+              >
+                {MHListFromDB.map((person, index) => (
+                  <MenuItem key={index} value={person.pic} style={getStyles(person.pic, selectedPerson, theme)}>{person.pic}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <Box sx={{ mb: 2 }}>
+              <FormControl>
+                <InputLabel id="select-status-label">ステータス</InputLabel>
                 <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={selectedPerson}
-                  label="担当者"
-                  multiple
-                  onChange={handleChangePerson}
-                  MenuProps={MenuProps}
-                  renderValue={(selected) => (
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                      {selected.map((value) => (
-                        <Chip key={value} label={value} />
-                      ))}
-                    </Box>
-                  )}
+                  labelId="select-status-label"
+                  id="select-status"
+                  value={status}
+                  label="Status"
+                  onChange={handleChangeStatus}
+                  sx={{ minWidth: 150, maxHeight: 50 }}
                 >
-                  {MHListFromDB.map((person, index) => (
-                    <MenuItem key={index} value={person.pic} style={getStyles(person.pic, selectedPerson, theme)}>{person.pic}</MenuItem>
-                  ))}
+                  <MenuItem value={0}>進行中</MenuItem>
+                  <MenuItem value={1}>完了</MenuItem>
+                  <MenuItem value={2}>今後</MenuItem>
                 </Select>
               </FormControl>
             </Box>
+
             <SimpleDatePicker value={value} endValue={endValue} setValue={setValue} setEndValue={setEndValue} />
-            <textarea
-              placeholder="備考"
-              value={note}
-              onChange={onChangeNote}
-              className="modal-note"
-            />
+            <Box component="form"
+              sx={{
+                '& .MuiTextField-root': { mt: 2 },
+              }} >
+              <TextField
+                id="outlined-multiline-static"
+                label="備考"
+                multiline
+                rows={4}
+                value={note}
+                onChange={onChangeNote}
+                fullWidth
+              />
+            </Box>
             <Box className="button-area">
               <Button variant="contained" onClick={onClickAdd}>作成</Button>
             </Box>

@@ -1,20 +1,22 @@
 import React, { useState } from 'react'
 import { format } from 'date-fns'
+import { SimpleDatePicker } from "./DatePicker";
 import { doc, deleteDoc, setDoc } from "firebase/firestore";
 import { db } from '../firebase';
-import './Card.css'
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import { SimpleDatePicker } from "./DatePicker";
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Chip from '@mui/material/Chip';
 import { useTheme } from '@mui/material/styles';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
+import TextField from '@mui/material/TextField';
+
+import './Card.css'
 
 
 export const Card = (props) => {
@@ -26,6 +28,7 @@ export const Card = (props) => {
   const initialDate = new Date()
   const [value, setValue] = useState(initialDate);
   const [endValue, setEndValue] = useState(initialDate);
+  const [status, setStatus] = useState("");
   const theme = useTheme();
 
   const ToDateStart = task.startDate;
@@ -64,6 +67,7 @@ export const Card = (props) => {
     setNote(task.note);
     setValue(ToDateStart);
     setEndValue(ToDateComp);
+    setStatus(task.status);
     setOpen(true);
   }
   const handleClose = () => setOpen(false);
@@ -95,6 +99,10 @@ export const Card = (props) => {
     );
   };
 
+  const handleChangeStatus = (e) => {
+    setStatus(e.target.value);
+  }
+
   const onClickUpdate = async () => {
     if (inputText === "") return;
     const editTask = {
@@ -103,9 +111,7 @@ export const Card = (props) => {
       pic: selectedPerson,
       startDate: value,
       compDate: endValue,
-
-      // 後ほどステータス選択できるよう改修
-      status: Number(task.status),
+      status: status,
       note: note
     };
 
@@ -124,7 +130,7 @@ export const Card = (props) => {
         pic: selectedPerson,
         startDate: value,
         compDate: endValue,
-        status: Number(task.status),
+        status: status,
         note: note
       });
       console.log("Document written with ID: ", task.id);
@@ -192,11 +198,20 @@ export const Card = (props) => {
           <h4 style={{ textAlign: 'center' }}>タスク編集</h4>
           <Box className="input-area">
             <Box sx={{ mb: 2 }}>
-              <input
+              {/* <input
                 placeholder="タスクを入力"
                 value={inputText}
                 onChange={onChangeText}
                 className="task-text"
+              /> */}
+              <TextField
+                variant="outlined"
+                value={inputText}
+                onChange={onChangeText}
+                className="task-text"
+                id="outlined-basic"
+                label="タスク名入力"
+                fullWidth
               />
             </Box>
             <FormControl sx={{ mb: 2, minWidth: 100 }} size="small">
@@ -222,14 +237,40 @@ export const Card = (props) => {
                 ))}
               </Select>
             </FormControl>
+
+            <Box sx={{ minWidth: 50 }}>
+              <FormControl>
+                <InputLabel id="select-status-label">ステータス</InputLabel>
+                <Select
+                  labelId="select-status-label"
+                  id="select-status"
+                  value={status}
+                  label="Status"
+                  onChange={handleChangeStatus}
+                >
+                  <MenuItem value={0}>進行中</MenuItem>
+                  <MenuItem value={1}>完了</MenuItem>
+                  <MenuItem value={2}>今後</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+
             <br />
             <SimpleDatePicker value={value} endValue={endValue} setValue={setValue} setEndValue={setEndValue} />
-            <textarea
-              placeholder="備考"
-              value={note}
-              onChange={onChangeNote}
-              className="modal-note"
-            />
+            <Box component="form"
+              sx={{
+                '& .MuiTextField-root': { mt: 2 },
+              }} >
+              <TextField
+                id="outlined-multiline-static"
+                label="備考"
+                multiline
+                rows={4}
+                value={note}
+                onChange={onChangeNote}
+                fullWidth
+              />
+            </Box>
             <Box sx={{
               mt: 2, display: 'flex', justifyContent: 'center'
             }}>
