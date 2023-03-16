@@ -5,7 +5,7 @@ task-app
 その日やるタスクのリストアップや、各タスクの進捗状況を整理できるアプリ。
 
 ## デモ画面
-カミングスーン
+![task-app-GIF](https://user-images.githubusercontent.com/70841616/225484889-cb892a3b-6961-4820-b3fc-dcd933a24a43.gif)
 
 ## アプリケーション機能詳細
 - その日行うタスクの登録、削除
